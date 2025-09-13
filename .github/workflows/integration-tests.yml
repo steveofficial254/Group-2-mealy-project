@@ -1,0 +1,58 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mealy_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    # Setup Backend
+    - name: Setup Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: |
+        pip install pipenv
+        pipenv install --dev
+    
+    # Setup Frontend
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+    
+    - name: Install frontend dependencies
+      working-directory: ./client
+      run: npm ci
+    
+    - name: Build frontend
+      working-directory: ./client
+      run: npm run build
