@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCartStore } from "../store/cartStore";
-import { mockAuth } from "../mockAuth";
+import mockAuth from "../mockAuth";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
