@@ -3,7 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Signup from './components/Signup';
 
-function App() {
+import Header from './components/Header';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import MenuPage from './pages/MenuPage';
+import AdminPage from './pages/AdminPage';
+import NotFound from './pages/NotFound';
+
+const queryClient = new QueryClient();
+
+const App = () => {
   return (
     <Router>
       <div className="App">
@@ -16,7 +25,7 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 const Home = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -39,5 +48,4 @@ const SignIn = () => (
     </div>
   </div>
 );
-
 export default App;
