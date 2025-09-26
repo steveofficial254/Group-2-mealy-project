@@ -1,99 +1,92 @@
-import React from 'react';
-import { Facebook, Twitter, Instagram, Youtube, MapPin, Phone, Mail } from 'lucide-react';
-import logoImage from '../assets/logo.png';
-import '../styles/Footer.css';
+import React from "react";
+import "../styles/Footer.css"; // Import the CSS
 
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-content">
-          {/* Brand Section */}
-          <div className="footer-section">
-            <img 
-              src={logoImage} 
-              alt="MEALY logo" 
-              className="footer-logo"
-            />
-            <p className="footer-description">
-              Delicious meals delivered to your doorstep. Fast, fresh, and always satisfying.
-            </p>
-            <div className="footer-social">
-              <a href="#" className="footer-social-link" aria-label="Facebook">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="footer-social-link" aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="footer-social-link" aria-label="Instagram">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="footer-social-link" aria-label="YouTube">
-                <Youtube size={20} />
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="footer-section">
-            <h3 className="footer-title">Quick Links</h3>
-            <div className="footer-links">
-              <a href="#" className="footer-link">Home</a>
-              <a href="#" className="footer-link">Menu</a>
-              <a href="#" className="footer-link">Restaurants</a>
-              <a href="#" className="footer-link">About Us</a>
-              <a href="#" className="footer-link">Contact</a>
-            </div>
-          </div>
-
-          {/* Services */}
-          <div className="footer-section">
-            <h3 className="footer-title">Services</h3>
-            <div className="footer-links">
-              <a href="#" className="footer-link">Food Delivery</a>
-              <a href="#" className="footer-link">Catering</a>
-              <a href="#" className="footer-link">Corporate Orders</a>
-              <a href="#" className="footer-link">Gift Cards</a>
-              <a href="#" className="footer-link">Loyalty Program</a>
-            </div>
-          </div>
-
-          {/* Contact Info */}
-          <div className="footer-section">
-            <h3 className="footer-title">Contact Info</h3>
-            <div className="footer-contact">
-              <div className="footer-contact-item">
-                <MapPin className="footer-contact-icon" size={20} />
-                <span className="footer-contact-text">
-                  123 Food Street, City, State 12345
-                </span>
+      {/* Main Footer Content */}
+      <div className="footer-main">
+        <div className="footer-container">
+          <div className="footer-content">
+            {/* Logo and App Downloads */}
+            <div className="footer-brand">
+              <div className="footer-logo">
+                <span className="footer-logo-text">MEALY</span>
+                <div className="footer-logo-icon"></div>
               </div>
-              <div className="footer-contact-item">
-                <Phone className="footer-contact-icon" size={20} />
-                <span className="footer-contact-text">
-                  +1 (555) 123-4567
-                </span>
+
+              <div className="footer-downloads">
+                <a href="#" className="download-btn">
+                  <span className="app-icon">📱</span>
+                  App Store
+                </a>
+                <a href="#" className="download-btn">
+                  <span className="app-icon">📱</span>
+                  Google Play
+                </a>
               </div>
-              <div className="footer-contact-item">
-                <Mail className="footer-contact-icon" size={20} />
-                <span className="footer-contact-text">
-                  hello@mealy.com
-                </span>
+
+              <div className="footer-social">
+                <a href="#" className="social-link facebook">f</a>
+                <a href="#" className="social-link instagram">📷</a>
+                <a href="#" className="social-link twitter">🐦</a>
+                <a href="#" className="social-link snapchat">👻</a>
               </div>
+            </div>
+
+            {/* Newsletter Signup */}
+            <div className="footer-newsletter">
+              <h4 className="footer-heading">Get Exclusive Deals in your Inbox</h4>
+              <div className="newsletter-signup">
+                <input 
+                  type="email" 
+                  placeholder="Your email address" 
+                  className="newsletter-input"
+                />
+                <button className="newsletter-btn">Subscribe</button>
+              </div>
+              <p className="newsletter-text">
+                we wont spam, read our <a href="#">email policy</a>
+              </p>
+            </div>
+
+            {/* Legal Pages */}
+            <div className="footer-column">
+              <h4 className="footer-heading">Legal Pages</h4>
+              <ul className="footer-list">
+                <li><a href="#">Terms and conditions</a></li>
+                <li><a href="#">Privacy</a></li>
+                <li><a href="#">Cookies</a></li>
+                <li><a href="#">Modern Slavery Statement</a></li>
+              </ul>
+            </div>
+
+            {/* Important Links */}
+            <div className="footer-column">
+              <h4 className="footer-heading">Important Links</h4>
+              <ul className="footer-list">
+                <li><a href="#">Get help</a></li>
+                <li><a href="#">Add your restaurant</a></li>
+                <li><a href="#">Sign up to deliver</a></li>
+                <li><a href="#">Create a business account</a></li>
+              </ul>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Section */}
-        <div className="footer-bottom">
+      {/* Footer Bottom */}
+      <div className="footer-bottom">
+        <div className="footer-container">
           <div className="footer-bottom-content">
-            <p className="footer-copyright">
-              © 2024 MEALY. All rights reserved.
+            <p className="copyright">
+              MEALY Copyright 2024, All Rights Reserved.
             </p>
-            <div className="footer-legal">
-              <a href="#" className="footer-legal-link">Privacy Policy</a>
-              <a href="#" className="footer-legal-link">Terms of Service</a>
-              <a href="#" className="footer-legal-link">Cookie Policy</a>
+            <div className="footer-bottom-links">
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms</a>
+              <a href="#">Pricing</a>
+              <a href="#">Do not sell or share my personal information</a>
             </div>
           </div>
         </div>
