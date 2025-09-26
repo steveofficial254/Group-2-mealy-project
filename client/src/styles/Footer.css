@@ -37,7 +37,7 @@
 .footer-logo-text {
   font-size: 2rem;
   font-weight: 700;
-  color: #ff6600; /* Accent color */
+  color: #ff6600; 
 }
 
 .footer-logo-icon {
@@ -196,7 +196,7 @@
 }
 
 .footer-bottom {
-  background: #000; /* Even darker bottom bar */
+  background: #000; 
   color: white;
   padding: 20px 0;
 }
