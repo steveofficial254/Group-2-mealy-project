@@ -74,10 +74,10 @@ export const MealyProvider = ({ children }) => {
     },
     { 
       id: 8, 
-      name: 'Fish & Chips', 
+      name: 'Fish & ugali', 
       price: 850, 
       category: 'Seafood', 
-      image: 'https://images.unsplash.com/photo-1559847844-d7a5ceadf3b1?w=400&h=300&fit=crop&crop=center' 
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6F-5ExO6HnUWgNnQ1_qRzsFXgDsu9j2KxOTPxXx_MgqIGxR1saR-bbCPdx-HsfmIocQc&usqp=CAU' 
     }
   ]);
 
