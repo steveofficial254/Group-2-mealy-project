@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/FeaturesHighlights.css";
 
 // ---------------- DEALS IMAGES ----------------
@@ -29,7 +29,11 @@ import image18 from "../assets/image18.jpg";
 import image17 from "../assets/image17.jpg";
 
 function FeaturesHighlights() {
-  // Deals
+  // ---------------- STATE ----------------
+  const [activeTab, setActiveTab] = useState(0); // Category tab
+  const [activeFAQ, setActiveFAQ] = useState(0); // FAQ toggle
+
+  // ---------------- DEALS ----------------
   const deals = [
     { id: 1, image: image1, alt: "Sandwich and salad combo deal" },
     { id: 2, image: image2, alt: "Various dishes deal" },
@@ -38,7 +42,6 @@ function FeaturesHighlights() {
 
   const categoriesTabs = ["Legal Fish", "Cuisine", "Pizza & Fast food"];
 
-  // Food Categories
   const categories = [
     { id: 1, name: "Kenyan Pilau", subtitle: "Spiced rice dish", image: kenyanPilau },
     { id: 2, name: "Nyama Choma", subtitle: "Grilled meat special", image: nyamaChoma },
@@ -48,33 +51,33 @@ function FeaturesHighlights() {
     { id: 6, name: "Soups", subtitle: "Warm & comforting", image: soups },
   ];
 
-  // Restaurants
+  // ---------------- RESTAURANTS ----------------
   const restaurants = [
-    { id: 1, name: "MAMA KULU", logo: mamaKuluLogo, buttonColor: "#ff6600", buttonText: "MAMA KULU" },
-    { id: 2, name: "Nairobi Street Kitchen", logo: nairobiStreetKitchenLogo, buttonColor: "#ff6600", buttonText: "Nairobi Street Kitchen" },
-    { id: 3, name: "KFC", logo: kfcLogo, buttonColor: "#DC143C", buttonText: "KFC" },
-    { id: 4, name: "ARZ", logo: arzLogo, buttonColor: "#4682B4", buttonText: "ARZ" },
-    { id: 5, name: "Ashoki", logo: ashokiLogo, buttonColor: "#000", buttonText: "Ashoki Restaurant" },
-    { id: 6, name: "JAVA HOUSE", logo: javaHouseLogo, buttonColor: "#ff6600", buttonText: "JAVA HOUSE" },
+    { id: 1, name: "MAMA KULU", logo: mamaKuluLogo, buttonColor: "#ff6600", link: "/restaurants/mama-kulu" },
+    { id: 2, name: "Nairobi Street Kitchen", logo: nairobiStreetKitchenLogo, buttonColor: "#ff6600", link: "/restaurants/nairobi-street-kitchen" },
+    { id: 3, name: "KFC", logo: kfcLogo, buttonColor: "#DC143C", link: "/restaurants/kfc" },
+    { id: 4, name: "ARZ", logo: arzLogo, buttonColor: "#4682B4", link: "/restaurants/arz" },
+    { id: 5, name: "Ashoki", logo: ashokiLogo, buttonColor: "#000", link: "/restaurants/ashoki" },
+    { id: 6, name: "JAVA HOUSE", logo: javaHouseLogo, buttonColor: "#ff6600", link: "/restaurants/java-house" },
   ];
 
-  // Rides
+  // ---------------- RIDES ----------------
   const rides = [
     { id: 6, image: image10 },
     { id: 9, image: image18 },
     { id: 10, image: image17 },
   ];
 
-  // FAQs
+  // ---------------- FAQ ----------------
   const faqs = [
-    { question: "How does MEALY work?", isActive: true },
-    { question: "What payment methods are accepted?", isActive: false },
-    { question: "Can I track my order in real-time?", isActive: false },
-    { question: "Are there any special discounts or promotional available?", isActive: false },
-    { question: "Is Order-UK available in my area?", isActive: false },
+    { question: "How does MEALY work?", answer: "MEALY allows you to order food and track it instantly." },
+    { question: "What payment methods are accepted?", answer: "We accept card payments, mobile money, and cash on delivery." },
+    { question: "Can I track my order in real-time?", answer: "Yes! You can track your order from our app or website." },
+    { question: "Are there any special discounts or promotions?", answer: "Check our deals section for ongoing offers." },
+    { question: "Is Order-UK available in my area?", answer: "Order-UK is currently available in select areas." },
   ];
 
-  // Features
+  // ---------------- FEATURES ----------------
   const features = [
     { icon: "📱", title: "Place an Order!", description: "Place order through our website or mobile app" },
     { icon: "🚚", title: "Track Progress", description: "You can track your order status with delivery time" },
@@ -83,14 +86,18 @@ function FeaturesHighlights() {
 
   return (
     <div className="features-highlights">
-      {/* ---------------- DEALS SECTION ---------------- */}
+      {/* ---------------- DEALS ---------------- */}
       <section className="deals-section">
         <div className="container">
           <div className="deals-header">
             <h2 className="deals-title">Up to -40% 🎯 MEALY exclusive deals</h2>
             <div className="category-tabs">
               {categoriesTabs.map((cat, index) => (
-                <button key={cat} className={`category-tab ${index === 2 ? "active" : ""}`}>
+                <button
+                  key={cat}
+                  className={`category-tab ${activeTab === index ? "active" : ""}`}
+                  onClick={() => setActiveTab(index)}
+                >
                   {cat}
                 </button>
               ))}
@@ -107,19 +114,17 @@ function FeaturesHighlights() {
         </div>
       </section>
 
-      {/* ---------------- CATEGORIES SECTION ---------------- */}
+      {/* ---------------- CATEGORIES ---------------- */}
       <section className="categories-section">
         <div className="container">
           <h2 className="section-title">Mealy Popular Categories 😋</h2>
           <div className="categories-grid">
             {categories.map((category) => (
               <div key={category.id} className="category-card">
-                <div className="category-image-container">
-                  <img src={category.image} alt={category.name} className="category-image" />
-                </div>
+                <img src={category.image} alt={category.name} className="category-image" />
                 <div className="category-info">
-                  <h3 className="category-name">{category.name}</h3>
-                  <p className="category-subtitle">{category.subtitle}</p>
+                  <h3>{category.name}</h3>
+                  <p>{category.subtitle}</p>
                 </div>
               </div>
             ))}
@@ -127,26 +132,27 @@ function FeaturesHighlights() {
         </div>
       </section>
 
-      {/* ---------------- RESTAURANTS SECTION ---------------- */}
+      {/* ---------------- RESTAURANTS ---------------- */}
       <section className="restaurants-section">
         <div className="container">
           <h2 className="section-title">Popular Restaurants 🍽️</h2>
           <div className="restaurants-grid">
             {restaurants.map((restaurant) => (
-              <div
+              <a
                 key={restaurant.id}
+                href={restaurant.link}
                 className="restaurant-card"
                 style={{ backgroundColor: restaurant.buttonColor }}
               >
                 <img src={restaurant.logo} alt={`${restaurant.name} logo`} className="restaurant-logo" />
-                <h3 className="restaurant-name">{restaurant.name}</h3>
-              </div>
+                <h3>{restaurant.name}</h3>
+              </a>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ---------------- PERSONALISED SECTION ---------------- */}
+      {/* ---------------- PERSONALISED ---------------- */}
       <section className="personalised">
         <div className="personalised-container">
           <div className="personalised-image">
@@ -154,22 +160,16 @@ function FeaturesHighlights() {
           </div>
           <div className="personalised-text">
             <h2>MEALY is more</h2>
-            <h2>
-              <span className="highlight">Personalised &amp; Instant</span>
-            </h2>
+            <h2><span className="highlight">Personalised &amp; Instant</span></h2>
             <div className="store-buttons">
-              <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer" className="store-btn">
-                <i className="fab fa-google-play"></i> Google Play
-              </a>
-              <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" className="store-btn">
-                <i className="fab fa-apple"></i> App Store
-              </a>
+              <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer" className="store-btn">Google Play</a>
+              <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" className="store-btn">App Store</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------------- RIDES SECTION ---------------- */}
+      {/* ---------------- RIDES ---------------- */}
       <section className="rides">
         <div className="rides-gallery">
           {rides.map((ride) => (
@@ -180,7 +180,7 @@ function FeaturesHighlights() {
         </div>
       </section>
 
-      {/* ---------------- ABOUT SECTION ---------------- */}
+      {/* ---------------- ABOUT / FAQ ---------------- */}
       <section className="about-section">
         <div className="container">
           <h2 className="section-title">Know more about us!</h2>
@@ -195,17 +195,14 @@ function FeaturesHighlights() {
 
               <div className="faq-list">
                 {faqs.map((faq, index) => (
-                  <div key={index} className={`faq-item ${faq.isActive ? "active" : ""}`}>
-                    <div className="faq-question">
+                  <div key={index} className={`faq-item ${activeFAQ === index ? "active" : ""}`}>
+                    <div className="faq-question" onClick={() => setActiveFAQ(index)}>
                       {faq.question}
-                      <span className="faq-icon">{faq.isActive ? "−" : "+"}</span>
+                      <span className="faq-icon">{activeFAQ === index ? "−" : "+"}</span>
                     </div>
-                    {faq.isActive && (
+                    {activeFAQ === index && (
                       <div className="faq-answer">
-                        <p>When payment methods are accepted?</p>
-                        <p>Can I track my order in real-time?</p>
-                        <p>Are there any special discounts or promotional available?</p>
-                        <p>Is Order-UK available in my area?</p>
+                        <p>{faq.answer}</p>
                       </div>
                     )}
                   </div>
@@ -218,8 +215,8 @@ function FeaturesHighlights() {
                 {features.map((feature, index) => (
                   <div key={index} className="feature-card">
                     <div className="feature-icon">{feature.icon}</div>
-                    <h3 className="feature-title">{feature.title}</h3>
-                    <p className="feature-description">{feature.description}</p>
+                    <h3>{feature.title}</h3>
+                    <p>{feature.description}</p>
                   </div>
                 ))}
               </div>

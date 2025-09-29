@@ -1,13 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import "../styles/Header.css";
 
 const Header = () => {
-  const [activeTab, setActiveTab] = useState("Home");
-
-  const handleNavigation = (tab) => {
-    setActiveTab(tab);
-  };
-
   return (
     <header className="header">
       {/* Top Banner */}
@@ -37,24 +32,24 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="navigation">
-            <button
-              onClick={() => handleNavigation("Home")}
-              className={`nav-button home ${activeTab === "Home" ? "active" : ""}`}
+            <NavLink
+              to="/"
+              className={({ isActive }) => `nav-button home ${isActive ? "active" : ""}`}
             >
               Home
-            </button>
-            <button
-              onClick={() => handleNavigation("Menu")}
-              className={`nav-button menu ${activeTab === "Menu" ? "active" : ""}`}
+            </NavLink>
+            <NavLink
+              to="/menu"
+              className={({ isActive }) => `nav-button menu ${isActive ? "active" : ""}`}
             >
               Menu
-            </button>
-            <button
-              onClick={() => handleNavigation("Admin")}
-              className={`nav-button admin ${activeTab === "Admin" ? "active" : ""}`}
+            </NavLink>
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => `nav-button admin ${isActive ? "active" : ""}`}
             >
               Admin
-            </button>
+            </NavLink>
           </nav>
 
           {/* Spacer */}
