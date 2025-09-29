@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -42,6 +41,9 @@ code {
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+  }
+}
+
 /* Custom utilities for the signup form */
 @layer utilities {
   .signup-input {
@@ -59,6 +61,5 @@ code {
   
   .social-button {
     @apply w-full flex items-center justify-center px-4 py-3 border border-red-300 rounded-lg bg-white bg-opacity-10 text-white hover:bg-opacity-20 transition-colors;
-
   }
 }
