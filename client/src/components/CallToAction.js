@@ -1,8 +1,6 @@
 import React from 'react';
 import '../styles/CallToAction.css';
-import phoneMockup from '../assets/phone-mockup.png';   // <-- Add your phone mockup image
-import appStore from '../assets/appstore.png';         // <-- App Store badge
-import playStore from '../assets/playstore.png';       // <-- Play Store badge
+     
 
 const CallToAction = () => {
   return (
@@ -22,17 +20,17 @@ const CallToAction = () => {
           {/* Download Buttons */}
           <div className="cta-buttons">
             <a href="#ios" className="store-badge">
-              <img src={appStore} alt="Download on App Store" />
+             
             </a>
             <a href="#android" className="store-badge">
-              <img src={playStore} alt="Get it on Google Play" />
+             
             </a>
           </div>
         </div>
 
         {/* Right Content - Phone Mockup */}
         <div className="cta-mockup">
-          <img src={phoneMockup} alt="Mealy App Preview" className="phone-image" />
+          
         </div>
       </div>
     </section>
