@@ -9,35 +9,23 @@ import Orders from './components/Orders';
 import './App.css';
 import Signup from './components/Signup';
 
-import HomePage from './pages/HomePage';
-import MenuPage from './pages/MenuPage';   
- 
+// Import your pages
+import HomePage from "./pages/HomePage";
+import MenuPage from "./pages/MenuPage";
 
-const queryClient = new QueryClient();
-
-const App = () => {
+function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <div style={{ 
-          minHeight: '100vh', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          backgroundColor: 'hsl(var(--background))' 
-        }}>
-          
-          <div style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/menu" element={<MenuPage />} />   {/* fixed */}
-            </Routes>
-          </div>
-       
-        </div>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Router>
+      <Routes>
+        {/* Homepage route */}
+        <Route path="/" element={<HomePage />} />
+
+        {/* Menu page route */}
+        <Route path="/menu" element={<MenuPage />} />
+      </Routes>
+    </Router>
   );
-};
+}
 
     <MealyProvider>
       <Router>
