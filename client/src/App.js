@@ -1,31 +1,39 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { MealyProvider } from './context/ContextProvider';
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
+import ManageMeals from './components/ManageMeals';
+import Orders from './components/Orders';
 import './App.css';
 import Signup from './components/Signup';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
-import MenuPage from './pages/MenuPage';
-import AdminPage from './pages/AdminPage';
-import NotFound from './pages/NotFound';
+// Import your pages
+import HomePage from "./pages/HomePage";
+import MenuPage from "./pages/MenuPage";
 
-const queryClient = new QueryClient();
-
-const App = () => {
+function App() {
   return (
-    <Router>
-      <div className="App">
+    <MealyProvider>
+      <Router>
         <Routes>
-          <Route path="/" element={<Signup />} />
+          {/* Public routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/menu" element={<MenuPage />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/home" element={<Home />} />
+
+          {/* Dashboard routes with Layout */}
+          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/meals" element={<Layout><ManageMeals /></Layout>} />
+          <Route path="/orders" element={<Layout><Orders /></Layout>} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </MealyProvider>
   );
-};
+}
 
 const Home = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -48,4 +56,5 @@ const SignIn = () => (
     </div>
   </div>
 );
+
 export default App;

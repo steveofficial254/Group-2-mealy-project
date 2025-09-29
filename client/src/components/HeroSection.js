@@ -1,112 +1,69 @@
-import { Star, Clock, Truck } from "lucide-react";
-import heroImage from "../assets/hero-bg.jpg";
+import React, { useState } from "react";
 import "../styles/HeroSection.css";
+import heroImg from "../assets/hero.jpg";
 
-const HeroSection = () => {
+function HeroSection() {
+  const [postcode, setPostcode] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (postcode.trim()) {
+      // Handle search functionality
+      console.log("Searching for:", postcode);
+    }
+  };
+
   return (
     <section className="hero">
-      <div className="hero-container">
-        <div className="hero-content">
-          {/* Left Content */}
-          <div className="hero-text">
-            <div>
-              <h1 className="hero-title">
-                <span>Feast Your</span>
-                <br />
-                <span className="primary">Senses,</span>
-                <br />
-                <span>Fast and</span>
-                <br />
-                <span className="primary">Fresh</span>
-              </h1>
-              <p className="hero-description">
-                Delicious meals delivered to your doorstep in 30 minutes or less.
-                Experience the perfect blend of taste, speed, and convenience.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="hero-buttons">
-              <button className="hero-button-primary">Order Now</button>
-              <button className="hero-button-secondary">View Menu</button>
-            </div>
-
-            {/* Stats */}
-            <div className="hero-stats">
-              <div className="hero-stat">
-                <div className="hero-stat-icon">
-                  <Star size={20} fill="currentColor" />
-                </div>
-                <div className="hero-stat-text">
-                  <div className="title">4.8 Rating</div>
-                  <div className="subtitle">2000+ Reviews</div>
-                </div>
-              </div>
-              <div className="hero-stat">
-                <div className="hero-stat-icon">
-                  <Clock size={20} />
-                </div>
-                <div className="hero-stat-text">
-                  <div className="title">30 Min</div>
-                  <div className="subtitle">Delivery</div>
-                </div>
-              </div>
-              <div className="hero-stat">
-                <div className="hero-stat-icon">
-                  <Truck size={20} />
-                </div>
-                <div className="hero-stat-text">
-                  <div className="title">Free</div>
-                  <div className="subtitle">Delivery</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Content - Hero Image */}
-          <div className="hero-image">
-            <div>
-              <img
-                src={heroImage}
-                alt="Delicious food assortment"
-                className="hero-main-image"
-              />
-
-              {/* Floating Cards */}
-              <div className="hero-floating-card top-left">
-                <div className="floating-card-content">
-                  <div className="floating-card-icon success">
-                    <Star size={16} fill="currentColor" />
-                  </div>
-                  <div className="floating-card-text">
-                    <div className="title">Top Rated</div>
-                    <div className="subtitle">Best Quality</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="hero-floating-card bottom-right">
-                <div className="floating-card-content">
-                  <div className="floating-card-icon primary">
-                    <Clock size={16} />
-                  </div>
-                  <div className="floating-card-text">
-                    <div className="title">Fast Delivery</div>
-                    <div className="subtitle">30 min max</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Background Image Container */}
+      <div className="hero-bg">
+        <img src={heroImg} alt="Delicious food delivery" />
       </div>
 
-      {/* Background Decorations */}
-      <div className="hero-decoration top-right"></div>
-      <div className="hero-decoration bottom-left"></div>
-      <div className="hero-decoration center-right"></div>
+      {/* Left Side Content */}
+      <div className="hero-left">
+        <h1>
+          Feast Your Senses,
+          <span>Fast and Fresh</span>
+        </h1>
+        <p>
+          Order restaurant food, takeaway, and groceries delivered right to your
+          door.
+        </p>
+
+        <form className="search-bar" onSubmit={handleSearch}>
+          <input 
+            type="text" 
+            placeholder="Enter a postcode to see what we deliver"
+            value={postcode}
+            onChange={(e) => setPostcode(e.target.value)}
+            required
+          />
+          <button type="submit" aria-label="Search for delivery options">
+            Search
+          </button>
+        </form>
+      </div>
+
+      {/* Right Side Order Cards */}
+      <div className="hero-right">
+        <div className="order-card order-card-1">
+          <h3>Order</h3>
+          <p>We've received your order!
+            Awaiting restaurant acceptance
+             🎉</p>
+        </div>
+        <div className="order-card order-card-2">
+          <h3>Order Accepted</h3>
+          <p>Your order will be delivered shortly</p>
+        </div>
+        <div className="order-card order-card-3">
+          <h3>Your rider's nearby 🚴</h3>
+          <p>They're almost there – get ready!</p>
+        </div>
+      </div>
     </section>
   );
-};
+}
 
 export default HeroSection;
