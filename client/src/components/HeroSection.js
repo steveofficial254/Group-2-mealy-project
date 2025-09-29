@@ -4,11 +4,12 @@ import heroImg from "../assets/hero.jpg";
 
 function HeroSection() {
   const [postcode, setPostcode] = useState("");
+  const [searchResult, setSearchResult] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (postcode.trim()) {
-      // Handle search functionality
+      setSearchResult(`Showing results for "${postcode}"`);
       console.log("Searching for:", postcode);
     }
   };
@@ -27,13 +28,12 @@ function HeroSection() {
           <span>Fast and Fresh</span>
         </h1>
         <p>
-          Order restaurant food, takeaway, and groceries delivered right to your
-          door.
+          Order restaurant food, takeaway, and groceries delivered right to your door.
         </p>
 
         <form className="search-bar" onSubmit={handleSearch}>
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Enter a postcode to see what we deliver"
             value={postcode}
             onChange={(e) => setPostcode(e.target.value)}
@@ -43,15 +43,16 @@ function HeroSection() {
             Search
           </button>
         </form>
+
+        {/* Search result message */}
+        {searchResult && <p className="search-result">{searchResult}</p>}
       </div>
 
       {/* Right Side Order Cards */}
       <div className="hero-right">
         <div className="order-card order-card-1">
           <h3>Order</h3>
-          <p>We've received your order!
-            Awaiting restaurant acceptance
-             🎉</p>
+          <p>We've received your order! Awaiting restaurant acceptance 🎉</p>
         </div>
         <div className="order-card order-card-2">
           <h3>Order Accepted</h3>
