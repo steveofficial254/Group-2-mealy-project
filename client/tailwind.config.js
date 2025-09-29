@@ -44,6 +44,12 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+
+        'mealy-coral': '#EB5C5C',
+        'mealy-green': '#2E6A2E',
+      },
+      fontFamily: {
+        'sans': ['Inter', 'Poppins', 'system-ui', 'sans-serif'],
       },
     },
   },

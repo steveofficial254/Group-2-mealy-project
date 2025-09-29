@@ -18,3 +18,20 @@ global.ResizeObserver = class ResizeObserver {
 
 // Mock canvas for chart tests
 HTMLCanvasElement.prototype.getContext = jest.fn();
+// Suppress React Router deprecation warnings in tests
+const originalWarn = console.warn;
+beforeAll(() => {
+  console.warn = (...args) => {
+    if (
+      typeof args[0] === 'string' && 
+      args[0].includes('React Router Future Flag Warning')
+    ) {
+      return;
+    }
+    originalWarn.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.warn = originalWarn;
+});
