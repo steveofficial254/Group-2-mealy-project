@@ -1,12 +1,21 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/Header.css";
 
 const Header = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("Home");
 
-  const handleNavigation = (tab) => {
-    setActiveTab(tab);
-  };
+  // Update active tab based on current route
+  React.useEffect(() => {
+    if (location.pathname === "/menu") {
+      setActiveTab("Menu");
+    } else if (location.pathname === "/admin") {
+      setActiveTab("Admin");
+    } else {
+      setActiveTab("Home");
+    }
+  }, [location.pathname]);
 
   return (
     <header className="header">
@@ -36,26 +45,19 @@ const Header = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="navigation">
-            <button
-              onClick={() => handleNavigation("Home")}
-              className={`nav-button home ${activeTab === "Home" ? "active" : ""}`}
-            >
-              Home
-            </button>
-            <button
-              onClick={() => handleNavigation("Menu")}
-              className={`nav-button menu ${activeTab === "Menu" ? "active" : ""}`}
-            >
-              Menu
-            </button>
-            <button
-              onClick={() => handleNavigation("Admin")}
-              className={`nav-button admin ${activeTab === "Admin" ? "active" : ""}`}
-            >
-              Admin
-            </button>
-          </nav>
+          <Link 
+            to="/menu" 
+            className={`nav-button menu ${activeTab === "Menu" ? "active" : ""}`}
+          >
+            Menu
+          </Link>
+
+          <Link 
+            to="/admin" 
+            className={`nav-button admin ${activeTab === "Admin" ? "active" : ""}`}
+          >
+            Admin
+          </Link>
 
           {/* Spacer */}
           <div className="spacer"></div>
