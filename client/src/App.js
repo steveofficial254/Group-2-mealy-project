@@ -8,6 +8,7 @@ import ManageMeals from './components/ManageMeals';
 import Orders from './components/Orders';
 import './App.css';
 import Signup from './components/Signup';
+import SignIn from './components/SignIn'; // Import SignIn
 
 // Import your pages
 import HomePage from "./pages/HomePage";
@@ -18,14 +19,19 @@ function App() {
     <MealyProvider>
       <Router>
         <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/menu" element={<MenuPage />} />
+          {/* Signup is the first page */}
+          <Route path="/" element={<Signup />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/home" element={<Home />} />
-
+          
+          {/* Home page after successful signup */}
+          <Route path="/home" element={<HomePage />} />
+          
+          {/* Other public routes */}
+          <Route path="/menu" element={<MenuPage />} />
+          
           {/* Dashboard routes with Layout */}
+          <Route path="/admin" element={<Layout><Dashboard /></Layout>} />
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/meals" element={<Layout><ManageMeals /></Layout>} />
           <Route path="/orders" element={<Layout><Orders /></Layout>} />
@@ -34,27 +40,5 @@ function App() {
     </MealyProvider>
   );
 }
-
-const Home = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Mealy!</h1>
-      <p className="text-xl text-gray-600">You've successfully signed up!</p>
-      <p className="text-sm text-gray-500 mt-4">This is a placeholder home page.</p>
-    </div>
-  </div>
-);
-
-const SignIn = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Sign In</h1>
-      <p className="text-xl text-gray-600">Sign in page coming soon...</p>
-      <a href="/signup" className="text-blue-500 underline mt-4 inline-block">
-        Go back to Sign Up
-      </a>
-    </div>
-  </div>
-);
 
 export default App;

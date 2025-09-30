@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/HeroSection.css";
 import heroImg from "../assets/hero.jpg";
 
 function HeroSection() {
   const [postcode, setPostcode] = useState("");
+  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Get user data from localStorage
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setUserName(user.name);
+    }
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (postcode.trim()) {
-      // Handle search functionality
       console.log("Searching for:", postcode);
+      navigate('/menu');
     }
   };
 
@@ -22,6 +34,17 @@ function HeroSection() {
 
       {/* Left Side Content */}
       <div className="hero-left">
+        {userName && (
+          <p className="welcome-text" style={{ 
+            fontSize: '1.2rem', 
+            color: '#2d3748', 
+            marginBottom: '1rem',
+            fontWeight: '600'
+          }}>
+            Welcome back, {userName}! 👋
+          </p>
+        )}
+        
         <h1>
           Feast Your Senses,
           <span>Fast and Fresh</span>
@@ -43,6 +66,16 @@ function HeroSection() {
             Search
           </button>
         </form>
+
+        {/* Browse Menu Button */}
+        <div className="hero-cta">
+          <button 
+            className="signup-btn"
+            onClick={() => navigate('/menu')}
+          >
+            Browse Our Menu
+          </button>
+        </div>
       </div>
 
       {/* Right Side Order Cards */}

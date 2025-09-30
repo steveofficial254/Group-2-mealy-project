@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Home");
 
   // Update active tab based on current route
@@ -36,8 +37,8 @@ const Header = () => {
       {/* Main Header */}
       <div className="main-header">
         <div className="header-container">
-          {/* Logo */}
-          <div className="logo-section">
+          {/* Logo - Click to go home */}
+          <div className="logo-section" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
             <div className="logo-container">
               <div className="logo-text">MEALY</div>
               <div className="logo-badge">ENJOY YOUR MEAL!</div>
