@@ -20,7 +20,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 340px;
   align-items: start;
-  background: linear-gradient(135deg, #ffb3c6 0%, #ff9bb3 50%, #ff8a9b 100%);
+  background: rgb(255, 255, 255);
   min-height: 650px;
   padding: 90px 70px 70px 70px;
   overflow: hidden;
@@ -34,7 +34,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(255, 215, 0, 0.25), transparent 70%),
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.25), transparent 70%),
               radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.15), transparent 70%);
   z-index: 1;
   pointer-events: none;
@@ -54,10 +54,12 @@ body {
 }
 
 .hero-bg img {
-  width: 100%;
-  height: 100%;
+  width: 8000px;
+  height: 250px;
+  gap: 20px;
+  background-color: #fafafa;
   object-fit: contain;
-  object-position: center;
+  object-position: centre;
   filter: brightness(0.95);
   transform: scale(1.02);
   transition: transform 6s ease;
@@ -121,7 +123,7 @@ body {
   border: none;
   outline: none;
   font-size: 1.1rem;
-  color: #2d3748;
+  color: #040406;
   background: transparent;
 }
 
@@ -150,7 +152,8 @@ body {
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+
+  gap: 15px;
   width: 340px;
   padding-top: 100px;
 }
@@ -168,177 +171,3 @@ body {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
-/* ===============================
-   Rides Section
-=================================*/
-.rides {
-  padding: 80px 60px;
-  background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 50%, #ffb3c6 100%);
-  text-align: center;
-  border-radius: 60px;
-  margin: 60px auto;
-  max-width: 1400px;
-}
-
-.rides h2 {
-  font-size: 2.8rem;
-  font-weight: 800;
-  margin-bottom: 50px;
-  color: #2d3748;
-}
-
-.rides-container {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.ride-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  width: 300px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.ride-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: contain;
-  object-position: center;
-  margin-bottom: 18px;
-}
-
-.ride-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-}
-
-/* ===============================
-   Main Product Section
-=================================*/
-.main-products {
-  padding: 80px 60px;
-  background: linear-gradient(135deg, #fff5f7 0%, #ffe0e9 50%, #ffd6e0 100%);
-  text-align: center;
-  border-radius: 60px;
-  margin: 60px auto;
-  max-width: 1400px;
-  box-shadow: 0 15px 45px rgba(0,0,0,0.1);
-}
-
-.main-products h2 {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 50px;
-  color: #2d3748;
-}
-
-/* Product Grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 40px;
-  justify-items: center;
-}
-
-/* Product Card */
-.product-card {
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 24px;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
-  max-width: 300px;
-}
-
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.18);
-}
-
-.product-card img {
-  width: 100%;
-  height: 240px;
-  object-fit: contain;
-  object-position: center;
-  margin-bottom: 18px;
-  transition: transform 0.4s ease;
-}
-
-.product-card:hover img {
-  transform: scale(1.05);
-}
-
-/* Info */
-.product-card h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #2d3748;
-}
-
-.product-card p {
-  font-size: 1rem;
-  color: #718096;
-  margin-bottom: 16px;
-}
-
-.product-card .price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ff6600;
-  margin-bottom: 16px;
-}
-
-.product-card button {
-  background: linear-gradient(135deg, #ff6600, #ff944d);
-  color: #fff;
-  border: none;
-  padding: 12px 26px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.product-card button:hover {
-  background: linear-gradient(135deg, #ff944d, #ff6600);
-  box-shadow: 0 8px 20px rgba(255,102,0,0.4);
-}
-
-/* ===============================
-   Animations
-=================================*/
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===============================
-   Responsive
-=================================*/
-@media (max-width: 1024px) {
-  .hero {
-    grid-template-columns: 1fr;
-    padding: 60px 40px;
-    min-height: 750px;
-  }
-  .hero-bg { left: 0; width: 100%; opacity: 0.3; }
-  .hero-left h1 { font-size: 3.5rem; }
-  .hero-right { width: 100%; max-width: 420px; padding-top: 0; }
-}
-
-@media (max-width: 768px) {
-  .hero { padding: 40px 20px; min-height: 700px; gap: 40px; }
-  .hero-left h1 { font-size: 3rem; }
-  .search-bar { flex-direction: column; border-radius: 25px; }
-  .search-bar button { border-radius: 0 0 25px 25px; width: 100%; }
-  .main-products { padding: 60px 20px; }
-  .rides { padding: 60px 20px; }
-}

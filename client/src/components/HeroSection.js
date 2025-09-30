@@ -51,14 +51,14 @@ function HeroSection() {
           <h3>Order</h3>
           <p>We've received your order!
             Awaiting restaurant acceptance
-             🎉</p>
+             </p>
         </div>
         <div className="order-card order-card-2">
           <h3>Order Accepted</h3>
           <p>Your order will be delivered shortly</p>
         </div>
         <div className="order-card order-card-3">
-          <h3>Your rider's nearby 🚴</h3>
+          <h3>Your rider's nearby </h3>
           <p>They're almost there – get ready!</p>
         </div>
       </div>

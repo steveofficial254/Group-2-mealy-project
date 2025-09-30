@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
 import FeaturesHighlights from "../components/FeaturesHighlights";
 import Footer from "../components/Footer";
@@ -8,7 +7,7 @@ const HomePage = () => {
   return (
     <div>
       {/* Header */}
-      <Header />
+      
 
       {/* Hero Section */}
       <HeroSection />

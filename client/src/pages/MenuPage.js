@@ -1,11 +1,11 @@
 import React from 'react';
-import Header from '../components/Header';
+
 import Footer from '../components/Footer';
 
 const MenuPage = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header currentPage="menu" />
+      
       <main className="py-20 px-4 text-center">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-5xl font-bold text-foreground mb-4">
@@ -15,7 +15,7 @@ const MenuPage = () => {
             Explore our delicious selection of meals from the best restaurants
           </p>
           <div className="bg-muted p-8 rounded-xl text-muted-foreground">
-            🍕 Menu page coming soon! Browse our amazing food categories on the home page.
+            Menu page coming soon! Browse our amazing food categories on the home page.
           </div>
         </div>
       </main>

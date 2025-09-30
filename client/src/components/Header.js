@@ -9,11 +9,17 @@ const Header = () => {
       <div className="top-banner">
         <div className="top-banner-container">
           <div className="promo-section">
-            <span>⭐</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
             <span>Get 5% Off your first order, Promo: ORDER5</span>
           </div>
           <div className="location-section">
-            <span></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
             <span>Kimathi Street Nairobi</span>
           </div>
         </div>
@@ -24,9 +30,15 @@ const Header = () => {
         <div className="header-container">
           {/* Logo */}
           <div className="logo-section">
-            <div className="logo-container">
-              <div className="logo-text">MEALY</div>
-              <div className="logo-badge">ENJOY YOUR MEAL!</div>
+            <div className="logo-image">
+              {/* Replace this div with your actual logo image */}
+           
+            </div>
+            <div className="logo-text-container">
+              <div className="logo-title">MEALY</div>
+              <div className="logo-badge">
+                <span>ENJOY YOUR MEAL!</span>
+              </div>
             </div>
           </div>
 
@@ -34,26 +46,23 @@ const Header = () => {
           <nav className="navigation">
             <NavLink
               to="/"
-              className={({ isActive }) => `nav-button home ${isActive ? "active" : ""}`}
+              className={({ isActive }) => `nav-button ${isActive ? "active" : ""}`}
             >
               Home
             </NavLink>
             <NavLink
               to="/menu"
-              className={({ isActive }) => `nav-button menu ${isActive ? "active" : ""}`}
+              className={({ isActive }) => `nav-button ${isActive ? "active" : ""}`}
             >
               Menu
             </NavLink>
             <NavLink
               to="/admin"
-              className={({ isActive }) => `nav-button admin ${isActive ? "active" : ""}`}
+              className={({ isActive }) => `nav-button ${isActive ? "active" : ""}`}
             >
-              Admin
+              admin
             </NavLink>
           </nav>
-
-          {/* Spacer */}
-          <div className="spacer"></div>
         </div>
       </div>
     </header>

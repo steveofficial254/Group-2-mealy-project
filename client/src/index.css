@@ -42,7 +42,10 @@ code {
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
-/* Custom utilities for the signup form */
+  }
+}
+
+ /* Custom utilities for the signup form */
 @layer utilities {
   .signup-input {
     @apply w-full px-4 py-3 rounded-lg border border-red-300 bg-red-300 bg-opacity-30 text-white placeholder-red-100 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent;
@@ -59,6 +62,5 @@ code {
   
   .social-button {
     @apply w-full flex items-center justify-center px-4 py-3 border border-red-300 rounded-lg bg-white bg-opacity-10 text-white hover:bg-opacity-20 transition-colors;
-
   }
 }

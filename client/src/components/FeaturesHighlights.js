@@ -31,7 +31,7 @@ import image17 from "../assets/image17.jpg";
 function FeaturesHighlights() {
   // ---------------- STATE ----------------
   const [activeTab, setActiveTab] = useState(0); // Category tab
-  const [activeFAQ, setActiveFAQ] = useState(0); // FAQ toggle
+  const [activeFAQ, setActiveFAQ] = useState(null); // FAQ toggle
 
   // ---------------- DEALS ----------------
   const deals = [
@@ -79,10 +79,15 @@ function FeaturesHighlights() {
 
   // ---------------- FEATURES ----------------
   const features = [
-    { icon: "📱", title: "Place an Order!", description: "Place order through our website or mobile app" },
-    { icon: "🚚", title: "Track Progress", description: "You can track your order status with delivery time" },
-    { icon: "✅", title: "Get your Order!", description: "Receive your order at a lightning fast speed!" },
+    { icon: "", title: "Place an Order!", description: "Place order through our website or mobile app" },
+    { icon: "", title: "Track Progress", description: "You can track your order status with delivery time" },
+    { icon: "", title: "Get your Order!", description: "Receive your order at a lightning fast speed!" },
   ];
+
+  // ---------------- HANDLERS ----------------
+  const handleTabClick = (tabName) => {
+    alert(`${tabName} - Coming Soon!`);
+  };
 
   return (
     <div className="features-highlights">
@@ -90,7 +95,7 @@ function FeaturesHighlights() {
       <section className="deals-section">
         <div className="container">
           <div className="deals-header">
-            <h2 className="deals-title">Up to -40% 🎯 MEALY exclusive deals</h2>
+            <h2 className="deals-title">Up to -40%  MEALY exclusive deals</h2>
             <div className="category-tabs">
               {categoriesTabs.map((cat, index) => (
                 <button
@@ -117,7 +122,7 @@ function FeaturesHighlights() {
       {/* ---------------- CATEGORIES ---------------- */}
       <section className="categories-section">
         <div className="container">
-          <h2 className="section-title">Mealy Popular Categories 😋</h2>
+          <h2 className="section-title">Mealy Popular Categories </h2>
           <div className="categories-grid">
             {categories.map((category) => (
               <div key={category.id} className="category-card">
@@ -135,7 +140,7 @@ function FeaturesHighlights() {
       {/* ---------------- RESTAURANTS ---------------- */}
       <section className="restaurants-section">
         <div className="container">
-          <h2 className="section-title">Popular Restaurants 🍽️</h2>
+          <h2 className="section-title">Popular Restaurants </h2>
           <div className="restaurants-grid">
             {restaurants.map((restaurant) => (
               <a
@@ -183,28 +188,32 @@ function FeaturesHighlights() {
       {/* ---------------- ABOUT / FAQ ---------------- */}
       <section className="about-section">
         <div className="container">
-          <h2 className="section-title">Know more about us!</h2>
+          <div className="about-header">
+            <h2 className="section-title">Know more about us!</h2>
+            <div className="faq-tabs top-tabs">
+              <button onClick={() => handleTabClick("Frequent Questions")}>Frequent Questions</button>
+              <button onClick={() => handleTabClick("Who we are?")}>Who we are?</button>
+              <button onClick={() => handleTabClick("Partner Program")}>Partner Program</button>
+              <button onClick={() => handleTabClick("Help & Support")}>Help & Support</button>
+            </div>
+          </div>
+
           <div className="about-content">
             <div className="faq-section">
-              <div className="faq-tabs">
-                <button className="tab active">Frequent Questions</button>
-                <button className="tab">Who we are?</button>
-                <button className="tab">Partner Program</button>
-                <button className="tab">Help & Support</button>
-              </div>
-
               <div className="faq-list">
                 {faqs.map((faq, index) => (
-                  <div key={index} className={`faq-item ${activeFAQ === index ? "active" : ""}`}>
-                    <div className="faq-question" onClick={() => setActiveFAQ(index)}>
+                  <div key={index} className="faq-item">
+                    <div
+                      className={`faq-question ${activeFAQ === index ? "active" : ""}`}
+                      onClick={() => setActiveFAQ(activeFAQ === index ? null : index)}
+                    >
                       {faq.question}
-                      <span className="faq-icon">{activeFAQ === index ? "−" : "+"}</span>
                     </div>
-                    {activeFAQ === index && (
-                      <div className="faq-answer">
-                        <p>{faq.answer}</p>
-                      </div>
-                    )}
+                    <div
+                      className={`faq-answer ${activeFAQ === index ? "show" : ""}`}
+                    >
+                      <p>{faq.answer}</p>
+                    </div>
                   </div>
                 ))}
               </div>
