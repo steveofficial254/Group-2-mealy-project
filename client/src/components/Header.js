@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 
@@ -6,9 +6,10 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Home");
+  const [userName, setUserName] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Update active tab based on current route
-  React.useEffect(() => {
+  useEffect(() => {
     if (location.pathname === "/menu") {
       setActiveTab("Menu");
     } else if (location.pathname === "/admin") {
@@ -16,7 +17,23 @@ const Header = () => {
     } else {
       setActiveTab("Home");
     }
+
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUserName(user.full_name || user.name || '');
+        setIsAdmin(user.role === 'admin');
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
   }, [location.pathname]);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/signin');
+  };
 
   return (
     <header className="header">
@@ -53,15 +70,45 @@ const Header = () => {
             Menu
           </Link>
 
-          <Link 
-            to="/admin" 
-            className={`nav-button admin ${activeTab === "Admin" ? "active" : ""}`}
+          <Link
+            to="/my-orders"
+            className={`nav-button ${activeTab === "Orders" ? "active" : ""}`}
           >
-            Admin
+            My Orders
           </Link>
 
-          {/* Spacer */}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`nav-button admin ${activeTab === "Admin" ? "active" : ""}`}
+            >
+              Admin
+            </Link>
+          )}
+
           <div className="spacer"></div>
+
+          {userName && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ color: '#333', fontWeight: '500' }}>
+                {userName}
+              </span>
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: '8px 16px',
+                  background: '#EB5C5C',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

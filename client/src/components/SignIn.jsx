@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillApple } from 'react-icons/ai';
+import { authAPI } from '../services/api';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -11,28 +12,34 @@ const SignIn = () => {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) return setError('All fields required');
     if (!form.email.includes('@')) return setError('Invalid email');
-    
+
     setLoading(true);
     setError('');
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Check if user exists in localStorage (mock authentication)
-      const storedUser = localStorage.getItem('userData');
-      
-      if (storedUser) {
-        localStorage.setItem('isAuthenticated', 'true');
-        setLoading(false);
-        navigate('/home');
+
+    try {
+      const response = await authAPI.login({
+        email: form.email,
+        password: form.password
+      });
+
+      localStorage.setItem('token', response.access_token);
+      localStorage.setItem('userData', JSON.stringify(response.user));
+      localStorage.setItem('isAuthenticated', 'true');
+
+      if (response.user.role === 'admin') {
+        navigate('/admin');
       } else {
-        setLoading(false);
-        setError('Account not found. Please sign up first.');
+        navigate('/home');
       }
-    }, 1000);
+    } catch (err) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const socialLogin = (type) => {

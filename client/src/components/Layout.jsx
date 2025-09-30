@@ -36,9 +36,9 @@ const Layout = ({ children }) => {
   ];
 
   const menuItems = [
-    {path: '/', label: 'Dashboard', icon: LayoutDashboard},
-    {path: '/meals', label: 'Manage Meals', icon: UtensilsCrossed},
-    {path: '/orders', label: 'Orders', icon: ShoppingBag}
+    {path: '/admin', label: 'Dashboard', icon: LayoutDashboard},
+    {path: '/admin/meals', label: 'Manage Meals', icon: UtensilsCrossed},
+    {path: '/admin/orders', label: 'Orders', icon: ShoppingBag}
   ];
 
   const handleSearch = (value) => {

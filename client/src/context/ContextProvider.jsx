@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { menuAPI, orderAPI, adminAPI } from '../services/api';
 
 const MealyContext = createContext();
 
@@ -11,8 +12,9 @@ export const useMealyContext = () => {
 };
 
 export const MealyProvider = ({ children }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [dashboard, setDashboard] = useState({
     totalOrders: 156,
@@ -81,13 +83,7 @@ export const MealyProvider = ({ children }) => {
     }
   ]);
 
-  const [orders, setOrders] = useState([
-    { id: 1, customer: 'Wanjiku Mwangi', items: 'Nyama Choma x1, Ugali x2', total: 1900, status: 'delivered', date: '2024-09-27', time: '12:30 PM' },
-    { id: 2, customer: 'James Kiprotich', items: 'Pilau Rice x1, Chapati x2', total: 1130, status: 'preparing', date: '2024-09-27', time: '1:15 PM' },
-    { id: 3, customer: 'Grace Njoki', items: 'Githeri Special x2, Samosas x6', total: 860, status: 'ready', date: '2024-09-27', time: '11:45 AM' },
-    { id: 4, customer: 'David Otieno', items: 'Fish & Chips x1, Mutura x1', total: 1270, status: 'delivered', date: '2024-09-27', time: '7:30 PM' },
-    { id: 5, customer: 'Mary Wanjiru', items: 'Ugali & Sukuma x2, Chapati x3', total: 1140, status: 'preparing', date: '2024-09-27', time: '2:00 PM' }
-  ]);
+  const [orders, setOrders] = useState([]);
 
   const reviews = [
     {
@@ -118,20 +114,76 @@ export const MealyProvider = ({ children }) => {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setCurrentUser(user);
+
+        if (user.role === 'admin') {
+          fetchAdminData();
+        }
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
   }, []);
 
-  const addMeal = (newMeal) => {
+  const fetchAdminData = async () => {
     try {
-      const meal = { 
-        id: Date.now(), 
-        ...newMeal,
-        price: parseFloat(newMeal.price),
-        // Default image if none provided
-        image: newMeal.image || 'https://static.vecteezy.com/system/resources/thumbnails/025/728/485/small_2x/good-investment-opportunities-404-error-animation-building-strategy-choosing-way-error-message-gif-motion-graphic-thinking-investor-animated-character-cartoon-4k-isolated-on-white-background-video.jpg'
+      const today = new Date().toISOString().split('T')[0];
+      const response = await adminAPI.getOrders({
+        caterer_id: 1,
+        date: today
+      });
+
+      if (response.data) {
+        const formattedOrders = response.data.map(order => ({
+          id: order.id,
+          customer: `Customer #${order.user_id}`,
+          items: order.items ? order.items.map(i => `Item ${i.dish_id} x${i.qty}`).join(', ') : 'N/A',
+          total: order.total_cents / 100,
+          status: order.status === 'placed' ? 'preparing' : order.status === 'served' ? 'delivered' : order.status,
+          date: new Date(order.created_at).toISOString().split('T')[0],
+          time: new Date(order.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        }));
+        setOrders(formattedOrders);
+
+        const totalRevenue = formattedOrders.reduce((sum, o) => sum + o.total, 0);
+        const deliveredCount = formattedOrders.filter(o => o.status === 'delivered').length;
+
+        setDashboard(prev => ({
+          ...prev,
+          totalOrders: formattedOrders.length,
+          totalDelivered: deliveredCount,
+          totalRevenue: totalRevenue
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch admin data:', err);
+    }
+  };
+
+  const addMeal = async (newMeal) => {
+    try {
+      const dishData = {
+        daily_menu_id: newMeal.daily_menu_id || 1,
+        name: newMeal.name,
+        price_cents: Math.round(parseFloat(newMeal.price) * 100),
+        category: newMeal.category,
+        image_url: newMeal.image,
+        description: newMeal.description || '',
+        ingredients: newMeal.ingredients || '',
+        available_qty: newMeal.available_qty || 10
       };
-      setMenu(prev => [...prev, meal]);
+      const response = await adminAPI.addDish(dishData);
+      setMenu(prev => [...prev, {
+        id: response.id,
+        name: response.name,
+        price: response.price_cents / 100,
+        category: response.category,
+        image: response.image_url
+      }]);
       return true;
     } catch (err) {
       setError('Failed to add meal');
@@ -139,17 +191,18 @@ export const MealyProvider = ({ children }) => {
     }
   };
 
-  // Update meal function
-  const updateMeal = (updatedMeal) => {
+  const updateMeal = async (updatedMeal) => {
     try {
-      setMenu(prev => prev.map(meal => 
-        meal.id === updatedMeal.id 
-          ? { 
-              ...meal, 
-              ...updatedMeal,
-              price: parseFloat(updatedMeal.price)
-            }
-          : meal
+      const dishData = {
+        name: updatedMeal.name,
+        price_cents: Math.round(parseFloat(updatedMeal.price) * 100),
+        category: updatedMeal.category,
+        image_url: updatedMeal.image,
+        available_qty: updatedMeal.available_qty || 10
+      };
+      await adminAPI.updateDish(updatedMeal.id, dishData);
+      setMenu(prev => prev.map(meal =>
+        meal.id === updatedMeal.id ? { ...meal, ...updatedMeal } : meal
       ));
       return true;
     } catch (err) {
@@ -158,7 +211,6 @@ export const MealyProvider = ({ children }) => {
     }
   };
 
-  //  Delete meal function
   const deleteMeal = (mealId) => {
     try {
       setMenu(prev => prev.filter(meal => meal.id !== mealId));
@@ -169,18 +221,18 @@ export const MealyProvider = ({ children }) => {
     }
   };
 
-  const addOrder = (newOrder) => {
+  const addOrder = async (orderData) => {
     try {
-      const order = { id: Date.now(), ...newOrder };
-      setOrders(prev => [...prev, order]);
+      const response = await orderAPI.placeOrder(orderData);
+      setOrders(prev => [...prev, response]);
       setDashboard(prev => ({
         ...prev,
         totalOrders: prev.totalOrders + 1
       }));
-      return true;
+      return response;
     } catch (err) {
-      setError('Failed to add order');
-      return false;
+      setError(err.message || 'Failed to place order');
+      throw err;
     }
   };
 
@@ -216,23 +268,25 @@ export const MealyProvider = ({ children }) => {
     return `KSh ${amount.toLocaleString()}`;
   };
 
-  
-  const value = { 
-    loading, 
-    error, 
-    dashboard, 
-    menu, 
-    orders, 
-    reviews, 
-    revenueData, 
-    addMeal, 
-    updateMeal,     
-    deleteMeal,     
-    addOrder, 
-    updateOrderStatus, 
-    getDailyRevenue, 
-    formatCurrency, 
-    setError 
+  const value = {
+    loading,
+    error,
+    dashboard,
+    menu,
+    orders,
+    reviews,
+    revenueData,
+    currentUser,
+    addMeal,
+    updateMeal,
+    deleteMeal,
+    addOrder,
+    updateOrderStatus,
+    getDailyRevenue,
+    formatCurrency,
+    setError,
+    setCurrentUser,
+    fetchAdminData
   };
 
   return <MealyContext.Provider value={value}>{children}</MealyContext.Provider>;

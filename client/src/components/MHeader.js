@@ -1,9 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/MHeader.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function MHeader() {
   const [location, setLocation] = useState("Nairobi, Kenya");
+  const [userName, setUserName] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUserName(user.full_name || user.name || '');
+        setIsAdmin(user.role === 'admin');
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/signin');
+  };
 
   return (
     <header className="m-header">
@@ -25,9 +46,29 @@ function MHeader() {
         </Link>
         
         <nav className="main-nav">
-          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/home" className="nav-link">Home</Link>
           <Link to="/menu" className="nav-link active">Menu</Link>
-          <Link to="/admin" className="nav-link">Admin</Link>
+          <Link to="/my-orders" className="nav-link">My Orders</Link>
+          {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
+          {userName && (
+            <>
+              <span style={{ color: '#333', marginLeft: '20px' }}>{userName}</span>
+              <button
+                onClick={handleLogout}
+                style={{
+                  marginLeft: '10px',
+                  padding: '6px 14px',
+                  background: '#EB5C5C',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Logout
+              </button>
+            </>
+          )}
         </nav>
       </div>
     </header>

@@ -2,34 +2,45 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillApple } from 'react-icons/ai';
+import { authAPI } from '../services/api';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) return setError('All fields required');
     if (!form.email.includes('@')) return setError('Invalid email');
     if (form.password.length < 6) return setError('Password must be at least 6 characters');
     if (!agreed) return setError('Must agree to terms');
+
+    setLoading(true);
     setError('');
-    
-    // Store user info
-    localStorage.setItem('userName', form.name);
-    localStorage.setItem('userEmail', form.email);
-    localStorage.setItem('isAuthenticated', 'true');
-    
-    // Redirect to homepage after successful signup
-    navigate('/home');
+
+    try {
+      const response = await authAPI.register({
+        full_name: form.name,
+        email: form.email,
+        password: form.password,
+        role: 'customer'
+      });
+
+      localStorage.setItem('userData', JSON.stringify(response));
+      navigate('/signin');
+    } catch (err) {
+      setError(err.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const socialLogin = (type) => {
-    // Store that user logged in via social
     localStorage.setItem('loginMethod', type);
     localStorage.setItem('isAuthenticated', 'true');
     navigate('/home');
@@ -88,12 +99,13 @@ const Signup = () => {
               </div>
             )}
 
-            <button 
-              type="submit" 
-              className="w-full py-3 rounded-lg font-bold text-white hover:opacity-90 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-lg font-bold text-white hover:opacity-90 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               style={{backgroundColor: '#2E6A2E'}}
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
 
             <div className="relative my-6">

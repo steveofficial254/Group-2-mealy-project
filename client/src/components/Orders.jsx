@@ -14,7 +14,7 @@ const Badge = ({ className, children }) => (
 const AddOrderForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({ customer: '', items: '', total: '', status: 'preparing' });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newOrder = {
       ...formData,
@@ -22,9 +22,12 @@ const AddOrderForm = ({ onSubmit, onCancel }) => {
       date: new Date().toISOString().split('T')[0],
       time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     };
-    if (onSubmit(newOrder)) {
+    try {
+      await onSubmit(newOrder);
       setFormData({ customer: '', items: '', total: '', status: 'preparing' });
       onCancel();
+    } catch (err) {
+      console.error('Failed to add order:', err);
     }
   };
 
@@ -73,13 +76,20 @@ const OrderTracker = ({ order, onStatusUpdate }) => {
 };
 
 const Orders = () => {
-  const { loading, error, orders, addOrder, updateOrderStatus, getDailyRevenue, formatCurrency } = useMealyContext();
+  const { loading, error, orders, addOrder, updateOrderStatus, getDailyRevenue, formatCurrency, fetchAdminData } = useMealyContext();
   const [showAddForm, setShowAddForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const today = new Date().toISOString().split('T')[0];
   const todayRevenue = getDailyRevenue(today);
+
+  const handleStatusUpdate = (orderId, newStatus) => {
+    updateOrderStatus(orderId, newStatus);
+    if (fetchAdminData) {
+      setTimeout(() => fetchAdminData(), 500);
+    }
+  };
 
   if (loading) return <div className="flex items-center justify-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div></div>;
   if (error) return <div className="p-6 text-center"><div className="text-red-600">Error: {error}</div></div>;
@@ -154,7 +164,7 @@ const Orders = () => {
                       <Badge className={getStatusBadge(order.status)}>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Badge>
                     </td>
                     <td className="py-3 px-4">
-                      <OrderTracker order={order} onStatusUpdate={updateOrderStatus} />
+                      <OrderTracker order={order} onStatusUpdate={handleStatusUpdate} />
                     </td>
                   </tr>
                 ))}

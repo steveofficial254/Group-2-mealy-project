@@ -26,14 +26,14 @@ const AddMealForm = ({ onSubmit, onCancel, editingMeal = null }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const mealData = { 
-      ...formData, 
+    const mealData = {
+      ...formData,
       price: parseFloat(formData.price),
       ...(editingMeal && { id: editingMeal.id })
     };
-    const success = onSubmit(mealData);
+    const success = await onSubmit(mealData);
     if (success) {
       setFormData({ name: '', price: '', category: 'Traditional', image: '' });
       setImagePreview(null);
@@ -141,13 +141,13 @@ const ManageMeals = () => {
   const [editingMeal, setEditingMeal] = useState(null);
   const [deletingMeal, setDeletingMeal] = useState(null);
 
-  const handleAddMeal = (mealData) => {
-    const success = addMeal(mealData);
+  const handleAddMeal = async (mealData) => {
+    const success = await addMeal(mealData);
     return success;
   };
 
-  const handleEditMeal = (mealData) => {
-    const success = updateMeal(mealData);
+  const handleEditMeal = async (mealData) => {
+    const success = await updateMeal(mealData);
     return success;
   };
 

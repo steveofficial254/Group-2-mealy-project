@@ -87,14 +87,10 @@ function FeaturesHighlights() {
       <section className="deals-section">
         <div className="container">
           <div className="deals-header">
-            <h2 className="deals-title">Up to -40% 🎯 MEALY exclusive deals</h2>
-            <div className="category-tabs">
-              {categoriesTabs.map((cat, index) => (
-                <button key={cat} className={`category-tab ${index === 2 ? "active" : ""}`}>
-                  {cat}
-                </button>
-              ))}
-            </div>
+            <h2 className="deals-title">Today's Featured Meals</h2>
+            <p style={{ fontSize: '1rem', color: '#666', marginTop: '0.5rem' }}>
+              Pre-order your favorite meals from our daily menu
+            </p>
           </div>
 
           <div className="deals-grid">
@@ -110,7 +106,10 @@ function FeaturesHighlights() {
       {/* ---------------- CATEGORIES SECTION ---------------- */}
       <section className="categories-section">
         <div className="container">
-          <h2 className="section-title">Mealy Popular Categories 😋</h2>
+          <h2 className="section-title">Popular Meal Categories</h2>
+          <p style={{ fontSize: '1rem', color: '#666', textAlign: 'center', marginBottom: '2rem' }}>
+            Browse our selection of delicious meal options
+          </p>
           <div className="categories-grid">
             {categories.map((category) => (
               <div key={category.id} className="category-card">
@@ -130,7 +129,10 @@ function FeaturesHighlights() {
       {/* ---------------- RESTAURANTS SECTION ---------------- */}
       <section className="restaurants-section">
         <div className="container">
-          <h2 className="section-title">Popular Restaurants 🍽️</h2>
+          <h2 className="section-title">Our Caterers</h2>
+          <p style={{ fontSize: '1rem', color: '#666', textAlign: 'center', marginBottom: '2rem' }}>
+            Quality meals from trusted local caterers
+          </p>
           <div className="restaurants-grid">
             {restaurants.map((restaurant) => (
               <div
@@ -150,21 +152,16 @@ function FeaturesHighlights() {
       <section className="personalised">
         <div className="personalised-container">
           <div className="personalised-image">
-            <img src={image9} alt="Personalised Experience" />
+            <img src={image9} alt="Easy Meal Ordering" />
           </div>
           <div className="personalised-text">
-            <h2>MEALY is more</h2>
+            <h2>Pre-order made</h2>
             <h2>
-              <span className="highlight">Personalised &amp; Instant</span>
+              <span className="highlight">Simple &amp; Convenient</span>
             </h2>
-            <div className="store-buttons">
-              <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer" className="store-btn">
-                <i className="fab fa-google-play"></i> Google Play
-              </a>
-              <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" className="store-btn">
-                <i className="fab fa-apple"></i> App Store
-              </a>
-            </div>
+            <p style={{ fontSize: '1rem', color: '#666', marginTop: '1rem' }}>
+              Order your meals in advance. Set it and forget it!
+            </p>
           </div>
         </div>
       </section>
@@ -183,37 +180,9 @@ function FeaturesHighlights() {
       {/* ---------------- ABOUT SECTION ---------------- */}
       <section className="about-section">
         <div className="container">
-          <h2 className="section-title">Know more about us!</h2>
+          <h2 className="section-title">How It Works</h2>
           <div className="about-content">
-            <div className="faq-section">
-              <div className="faq-tabs">
-                <button className="tab active">Frequent Questions</button>
-                <button className="tab">Who we are?</button>
-                <button className="tab">Partner Program</button>
-                <button className="tab">Help & Support</button>
-              </div>
-
-              <div className="faq-list">
-                {faqs.map((faq, index) => (
-                  <div key={index} className={`faq-item ${faq.isActive ? "active" : ""}`}>
-                    <div className="faq-question">
-                      {faq.question}
-                      <span className="faq-icon">{faq.isActive ? "−" : "+"}</span>
-                    </div>
-                    {faq.isActive && (
-                      <div className="faq-answer">
-                        <p>When payment methods are accepted?</p>
-                        <p>Can I track my order in real-time?</p>
-                        <p>Are there any special discounts or promotional available?</p>
-                        <p>Is Order-UK available in my area?</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="features-section">
+            <div className="features-section" style={{ maxWidth: '100%' }}>
               <div className="features-grid">
                 {features.map((feature, index) => (
                   <div key={index} className="feature-card">
@@ -226,9 +195,9 @@ function FeaturesHighlights() {
 
               <div className="features-description">
                 <p>
-                  MEALY simplifies the food ordering process. Browse through our diverse menus,
-                  select your favorite dishes, and proceed to checkout. Your delicious meal will be
-                  on its way to your doorstep in no time!
+                  MEALY connects you with local caterers offering daily meal options. View the menu for the day,
+                  select your meal, and complete your order before the cutoff time. Your meal will be ready for pickup
+                  or delivery at the scheduled time.
                 </p>
               </div>
             </div>

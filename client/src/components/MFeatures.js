@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { orderAPI } from "../services/api";
+import PaymentModal from "./PaymentModal";
 import "../styles/MFeatures.css";
 
 // Import images
@@ -43,11 +46,12 @@ import image52 from "../assets/image52.jpg";
 import image53 from "../assets/image53.jpg";
 
 function MFeatures() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("Pizzas");
-  const [basketItems, setBasketItems] = useState([
-    { name: "Farmhouse Pizza", price: 950, quantity: 1, toppings: "2x Mushrooms, 1 green peppers" },
-    { name: "Deluxe Pizza", price: 1800, quantity: 2 }
-  ]);
+  const [basketItems, setBasketItems] = useState([]);
+  const [isOrdering, setIsOrdering] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [pendingOrderData, setPendingOrderData] = useState(null);
 
   // Menu data for all categories
   const menuData = {
@@ -348,9 +352,11 @@ function MFeatures() {
 
   const addToBasket = (item, size) => {
     const newItem = {
+      dish_id: item.id,
       name: `${item.name} (${size})`,
       price: item.prices[size],
-      quantity: 1
+      quantity: 1,
+      size
     };
     setBasketItems([...basketItems, newItem]);
   };
@@ -360,6 +366,48 @@ function MFeatures() {
     setBasketItems(newBasket);
   };
 
+  const handleCheckout = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please sign in to place an order');
+      navigate('/signin');
+      return;
+    }
+
+    if (basketItems.length === 0) {
+      alert('Your basket is empty');
+      return;
+    }
+
+    const orderData = {
+      daily_menu_id: 1,
+      items: basketItems.map(item => ({
+        dish_id: item.dish_id,
+        qty: item.quantity
+      }))
+    };
+
+    setPendingOrderData(orderData);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentComplete = async (paymentInfo) => {
+    setIsOrdering(true);
+
+    try {
+      await orderAPI.placeOrder(pendingOrderData);
+      alert(`Payment successful via ${paymentInfo.method}! Order placed.`);
+      setBasketItems([]);
+      setPendingOrderData(null);
+      navigate('/my-orders');
+    } catch (error) {
+      console.error('Order failed:', error);
+      alert(error.message || 'Failed to place order. Please try again.');
+    } finally {
+      setIsOrdering(false);
+    }
+  };
+
   const subtotal = basketItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = 0;
   const deliveryFee = 400;
@@ -367,6 +415,12 @@ function MFeatures() {
 
   return (
     <div className="m-features-container">
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        orderTotal={total}
+        onPaymentComplete={handlePaymentComplete}
+      />
       <div className="features-layout">
         {/* Sidebar Menu */}
         <aside className="menu-sidebar">
@@ -502,9 +556,14 @@ function MFeatures() {
             </button>
           </div>
 
-          <button className="checkout-btn">
+          <button
+            className="checkout-btn"
+            onClick={handleCheckout}
+            disabled={isOrdering || basketItems.length === 0}
+            style={{ opacity: (isOrdering || basketItems.length === 0) ? 0.5 : 1 }}
+          >
             <span>✅</span>
-            Checkout!
+            {isOrdering ? 'Placing Order...' : 'Checkout!'}
           </button>
         </aside>
       </div>

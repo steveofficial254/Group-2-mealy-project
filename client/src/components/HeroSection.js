@@ -35,45 +35,32 @@ function HeroSection() {
       {/* Left Side Content */}
       <div className="hero-left">
         {userName && (
-          <p className="welcome-text" style={{ 
-            fontSize: '1.2rem', 
-            color: '#2d3748', 
+          <p className="welcome-text" style={{
+            fontSize: '1.2rem',
+            color: '#2d3748',
             marginBottom: '1rem',
             fontWeight: '600'
           }}>
-            Welcome back, {userName}! 👋
+            Welcome back, {userName}!
           </p>
         )}
-        
+
         <h1>
-          Feast Your Senses,
-          <span>Fast and Fresh</span>
+          Order Your Daily Meal
+          <span>Fresh & Convenient</span>
         </h1>
         <p>
-          Order restaurant food, takeaway, and groceries delivered right to your
-          door.
+          Pre-order your meals from our daily menu. Quick, easy, and delicious meals ready when you need them.
         </p>
-
-        <form className="search-bar" onSubmit={handleSearch}>
-          <input 
-            type="text" 
-            placeholder="Enter a postcode to see what we deliver"
-            value={postcode}
-            onChange={(e) => setPostcode(e.target.value)}
-            required
-          />
-          <button type="submit" aria-label="Search for delivery options">
-            Search
-          </button>
-        </form>
 
         {/* Browse Menu Button */}
         <div className="hero-cta">
-          <button 
+          <button
             className="signup-btn"
             onClick={() => navigate('/menu')}
+            style={{ marginTop: '2rem' }}
           >
-            Browse Our Menu
+            View Today's Menu
           </button>
         </div>
       </div>
