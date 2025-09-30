@@ -1,12 +1,12 @@
 /* MHeader.css */
 .m-header {
-  background: rgb(156, 150, 150);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgb(255, 255, 255);
+  box-shadow: 0 2px 8px rgba(212, 73, 13, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
   transition: box-shadow 0.3s ease, background 0.3s ease;
-  color: #fff;
+  color: #c3cf25;
 }
 
 .header-top {
@@ -14,7 +14,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 80px;
-  background: rgba(255, 255, 255, 0.1); /* semi-transparent overlay */
+  background: rgba(148, 144, 144, 0.1); /* semi-transparent overlay */
   font-size: 13px;
   backdrop-filter: blur(4px);
 }
@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #fff;
+  color: #caba29;
 }
 
 .delivery-icon {
@@ -32,7 +32,7 @@
 }
 
 .delivery-info a {
-  color: #fff;
+  color: #e3ef0e;
   text-decoration: none;
   font-weight: 600;
 }
@@ -45,13 +45,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #fff;
+  color: #d6c615;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .location-info:hover {
-  color: #ffd4b0;
+  color: #125e8a;
 }
 
 .location-icon {
@@ -79,7 +79,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease;
-  color: #fff;
+  color: #070707;
 }
 
 .logo:hover {
@@ -92,7 +92,7 @@
 }
 
 .logo-text {
-  color: #fff;
+  color: #0c0c0c;
   letter-spacing: 1px;
 }
 
@@ -104,7 +104,7 @@
 
 .nav-link {
   text-decoration: none;
-  color: #fff;
+  color: #0e0e0e;
   font-size: 16px;
   font-weight: 500;
   padding: 8px 0;
@@ -118,7 +118,7 @@
 }
 
 .nav-link.active {
-  color: #fff;
+  color: #393737;
   font-weight: 600;
 }
 

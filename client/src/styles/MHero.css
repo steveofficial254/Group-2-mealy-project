@@ -236,3 +236,63 @@
     justify-content: center;
   }
 }
+.search-result-card {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #fff;
+  max-width: 400px;
+}
+
+/* Out of order styling */
+.out-of-order {
+  color: #e74c3c;
+  font-weight: bold;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Found item card */
+.found-item-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Image of the item */
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+/* Details container */
+.item-details {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Name */
+.item-name {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+/* Description */
+.item-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* Prices */
+.item-prices {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 500;
+}

@@ -1,56 +1,38 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { MealyProvider } from './context/ContextProvider';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import ManageMeals from './components/ManageMeals';
 import Orders from './components/Orders';
-import './App.css';
 import Signup from './components/Signup';
-
-// Import your pages
 import HomePage from "./pages/HomePage";
 import MenuPage from "./pages/MenuPage";
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Homepage route */}
-        <Route path="/" element={<HomePage />} />
-
-        {/* Menu page route */}
-        <Route path="/menu" element={<MenuPage />} />
-      </Routes>
-    </Router>
-  );
-}
-
     <MealyProvider>
       <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/home" element={<Home />} />
+
+          {/* Protected / Dashboard routes */}
+          <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/meals" element={<ManageMeals />} />
             <Route path="/orders" element={<Orders />} />
-          </Routes>
-        </Layout>
+          </Route>
+        </Routes>
       </Router>
     </MealyProvider>
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Signup />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/signin" element={<SignIn />} />
-        </Routes>
-      </div>
-    </Router>
   );
-};
+}
 
 const Home = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -73,4 +55,5 @@ const SignIn = () => (
     </div>
   </div>
 );
+
 export default App;

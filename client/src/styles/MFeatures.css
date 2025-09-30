@@ -1,6 +1,6 @@
 /* MFeatures.css */
 .m-features-container {
-  background: rgb(210, 204, 204);
+  background: rgb(255, 255, 255);
   padding-bottom: 60px;
 }
 
@@ -137,7 +137,7 @@
 .size-btn {
   padding: 8px 16px;
   border: 1px solid #ddd;
-  background: white;
+  background: rgb(24, 165, 27);
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
@@ -153,7 +153,7 @@
 .add-to-basket {
   padding: 10px 20px;
   background: #28a745;
-  color: white;
+  color: rgb(50, 252, 0);
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -162,13 +162,13 @@
 }
 
 .add-to-basket:hover {
-  background: #218838;
+  background: #07df35;
   transform: translateY(-1px);
 }
 
 /* Basket Sidebar */
 .basket-sidebar {
-  background: white;
+  background: rgb(199, 200, 197);
   border-radius: 16px;
   padding: 24px;
   height: fit-content;
@@ -183,7 +183,8 @@
   gap: 10px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 2px solid #e0e0e0;
+  background-color: #07df35;
+  border-bottom: 2px solid #19cc13;
 }
 
 .basket-icon {
@@ -194,7 +195,9 @@
   font-size: 20px;
   font-weight: 700;
   margin: 0;
-  color: #1a1a1a;
+  color: #ffffff;
+  order: #07df35;
+ 
 }
 
 .basket-items {
@@ -219,6 +222,7 @@
 .basket-item-header {
   display: flex;
   align-items: center;
+
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -267,7 +271,7 @@
 
 .item-price {
   font-weight: 700;
-  color: #1a1a1a;
+  color: #27d211;
   font-size: 14px;
 }
 
@@ -308,7 +312,8 @@
   justify-content: space-between;
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
+  background-color: #ff8800;
   margin-bottom: 20px;
   padding: 16px 0;
 }
@@ -721,5 +726,89 @@
 
   .delivery-options {
     grid-template-columns: 1fr;
+  }
+}
+/* Checkout Modal */
+.checkout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.checkout-modal .modal-content {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.checkout-modal h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.checkout-modal ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.checkout-modal li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #666;
+}
+
+.checkout-modal p {
+  font-size: 14px;
+  margin: 8px 0;
+  color: #1a1a1a;
+}
+
+.checkout-modal button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.checkout-modal button:hover {
+  background: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Slide-in animation for modal */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
