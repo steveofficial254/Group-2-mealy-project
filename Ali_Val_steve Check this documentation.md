@@ -33,7 +33,7 @@ npm start  # Runs on http://localhost:3000
 
 ## Testing Flow
 **Customer**: Sign up → Browse menu → Add to cart → Checkout → View orders
-**Admin**: Login (admin@mealy.com / admin123) → Dashboard → Manage orders/meals → Logout
+**Admin**: Login (admin@test.com/ admin123) → Dashboard → Manage orders/meals → Logout
 
 ## Status
 ✅ Full system integration complete
