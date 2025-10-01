@@ -626,5 +626,8 @@ if __name__ == "__main__":
     # Safe in dev if tables don't exist yet; with migrations it's a no-op.
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+
+    # Allow port to be configured via environment variable or default to 5001
+    port = int(os.getenv("FLASK_PORT", 5001))
+    app.run(debug=True, port=port, host="0.0.0.0")
 
