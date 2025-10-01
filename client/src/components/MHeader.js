@@ -23,7 +23,7 @@ function MHeader() {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/signin');
+    setTimeout(() => navigate('/signin'), 0);
   };
 
   return (
