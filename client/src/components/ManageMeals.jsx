@@ -58,6 +58,11 @@ const imageMap = {
 const getImageFromUrl = (imageUrl) => {
   if (!imageUrl) return image4;
 
+  // If it's a base64 data URL, return it directly
+  if (imageUrl.startsWith('data:image/')) {
+    return imageUrl;
+  }
+
   // If it's already a full URL (http/https), return it directly
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl;
@@ -70,9 +75,9 @@ const getImageFromUrl = (imageUrl) => {
 
 const AddMealForm = ({ onSubmit, onCancel, editingMeal = null }) => {
   const [formData, setFormData] = useState({
-    name: editingMeal?.name || '', 
-    price: editingMeal?.price?.toString() || '', 
-    category: editingMeal?.category || 'Traditional', 
+    name: editingMeal?.name || '',
+    price: editingMeal?.price?.toString() || '',
+    category: editingMeal?.category || 'Daily Menu',
     image: editingMeal?.image || ''
   });
   const [imagePreview, setImagePreview] = useState(editingMeal?.image || null);
@@ -210,11 +215,17 @@ const ManageMeals = () => {
 
   const handleAddMeal = async (mealData) => {
     const success = await addMeal(mealData);
+    if (success) {
+      await fetchAllMenuItems(); // Refetch to show the new dish
+    }
     return success;
   };
 
   const handleEditMeal = async (mealData) => {
     const success = await updateMeal(mealData);
+    if (success) {
+      await fetchAllMenuItems(); // Refetch to show updated dish
+    }
     return success;
   };
 
@@ -222,9 +233,12 @@ const ManageMeals = () => {
     setDeletingMeal(meal);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deletingMeal) {
-      deleteMeal(deletingMeal.id);
+      const success = await deleteMeal(deletingMeal.id);
+      if (success) {
+        await fetchAllMenuItems(); // Refetch to remove deleted dish
+      }
       setDeletingMeal(null);
     }
   };
@@ -240,53 +254,53 @@ const ManageMeals = () => {
   };
 
   // Fetch all menu items including database dishes and static categories
-  React.useEffect(() => {
-    const fetchAllMenuItems = async () => {
-      try {
-        setIsLoadingAllItems(true);
-        const token = localStorage.getItem('token');
-        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+  const fetchAllMenuItems = React.useCallback(async () => {
+    try {
+      setIsLoadingAllItems(true);
+      const token = localStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-        // Get today's daily menu
-        const today = new Date().toISOString().split('T')[0];
-        const menusResponse = await fetch(`http://localhost:5000/daily-menus?date=${today}`, { headers });
-        const menusData = await menusResponse.json();
+      // Get today's daily menu
+      const today = new Date().toISOString().split('T')[0];
+      const menusResponse = await fetch(`http://localhost:5000/daily-menus?date=${today}`, { headers });
+      const menusData = await menusResponse.json();
 
-        let fetchedItems = [];
+      let fetchedItems = [];
 
-        if (menusData.data && menusData.data.length > 0) {
-          const menuId = menusData.data[0].id;
+      if (menusData.data && menusData.data.length > 0) {
+        const menuId = menusData.data[0].id;
 
-          // Fetch all dishes (increase per_page to get all items)
-          const dishesResponse = await fetch(`http://localhost:5000/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
-          const dishesData = await dishesResponse.json();
+        // Fetch all dishes (increase per_page to get all items)
+        const dishesResponse = await fetch(`http://localhost:5000/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
+        const dishesData = await dishesResponse.json();
 
-          if (dishesData.data) {
-            fetchedItems = dishesData.data.map(dish => ({
-              id: dish.id,
-              name: dish.name,
-              price: dish.price_cents / 100,
-              category: dish.category,
-              image: getImageFromUrl(dish.image_url)
-            }));
-            console.log('✓ Fetched dishes for admin:', fetchedItems.length, 'items');
-            console.log('Sample dish:', fetchedItems[0]);
-          }
+        if (dishesData.data) {
+          fetchedItems = dishesData.data.map(dish => ({
+            id: dish.id,
+            name: dish.name,
+            price: dish.price_cents / 100,
+            category: dish.category,
+            image: getImageFromUrl(dish.image_url)
+          }));
+          console.log('✓ Fetched dishes for admin:', fetchedItems.length, 'items');
+          console.log('Sample dish:', fetchedItems[0]);
         }
-
-        // Combine with items from context (fallback)
-        const combined = fetchedItems.length > 0 ? fetchedItems : menu;
-        setAllMenuItems(combined);
-      } catch (error) {
-        console.error('Failed to fetch all menu items:', error);
-        setAllMenuItems(menu); // Fallback to context menu
-      } finally {
-        setIsLoadingAllItems(false);
       }
-    };
 
-    fetchAllMenuItems();
+      // Combine with items from context (fallback)
+      const combined = fetchedItems.length > 0 ? fetchedItems : menu;
+      setAllMenuItems(combined);
+    } catch (error) {
+      console.error('Failed to fetch all menu items:', error);
+      setAllMenuItems(menu); // Fallback to context menu
+    } finally {
+      setIsLoadingAllItems(false);
+    }
   }, [menu]);
+
+  React.useEffect(() => {
+    fetchAllMenuItems();
+  }, [fetchAllMenuItems]);
 
   if (loading) {
     return (

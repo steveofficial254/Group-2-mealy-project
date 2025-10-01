@@ -188,8 +188,19 @@ export const MealyProvider = ({ children }) => {
 
   const addMeal = async (newMeal) => {
     try {
+      // Get today's menu first
+      const today = new Date().toISOString().split('T')[0];
+      const menusResponse = await menuAPI.getDailyMenus({ date: today });
+
+      if (!menusResponse.data || menusResponse.data.length === 0) {
+        setError('No menu available for today. Please create a daily menu first.');
+        return false;
+      }
+
+      const dailyMenuId = menusResponse.data[0].id;
+
       const dishData = {
-        daily_menu_id: newMeal.daily_menu_id || 1,
+        daily_menu_id: dailyMenuId,
         name: newMeal.name,
         price_cents: Math.round(parseFloat(newMeal.price) * 100),
         category: newMeal.category,
@@ -202,7 +213,8 @@ export const MealyProvider = ({ children }) => {
       await fetchMenuData();
       return true;
     } catch (err) {
-      setError('Failed to add meal');
+      console.error('Failed to add meal:', err);
+      setError(err.message || 'Failed to add meal');
       return false;
     }
   };

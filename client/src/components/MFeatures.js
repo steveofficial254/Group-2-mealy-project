@@ -77,6 +77,11 @@ const MFeatures = forwardRef((props, ref) => {
   const getImageFromUrl = (imageUrl) => {
     if (!imageUrl) return image4;
 
+    // If it's a base64 data URL, return it directly
+    if (imageUrl.startsWith('data:image/')) {
+      return imageUrl;
+    }
+
     // If it's already a full URL (http/https), return it directly
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
