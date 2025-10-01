@@ -69,6 +69,19 @@ def create_app():
         return decorator
 
     # -------------------- Routes --------------------
+    @app.get("/")
+    def index():
+        return jsonify({
+            "message": "Mealy API Server",
+            "version": "1.0",
+            "endpoints": {
+                "health": "/health",
+                "auth": "/auth/login, /auth/register, /auth/google, /auth/apple",
+                "menus": "/daily-menus",
+                "orders": "/orders"
+            }
+        })
+
     @app.get("/health")
     def health():
         return jsonify({"ok": True})
