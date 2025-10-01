@@ -1,15 +1,34 @@
 # Setup Guide
 
 ## Backend Setup (Flask)
+
+### macOS/Linux:
 ```bash
 cd server
 python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
-flask db upgrade #no need to run this command skip it 
-python seed_menu.py  # Seed database the database has already been seed
+flask db upgrade  # Skip this - database already configured
+python seed_menu.py  # Skip this - database already seeded
 python app.py  # Runs on http://localhost:5000
 ```
+
+### Windows:
+```bash
+cd server
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+flask db upgrade  # Skip this - database already configured
+python seed_menu.py  # Skip this - database already seeded
+python app.py  # Runs on http://localhost:5000
+```
+
+**Note for Windows users:**
+- Use `python` instead of `python3`
+- Use backslashes (`\`) for paths instead of forward slashes (`/`)
+- If `venv\Scripts\activate` doesn't work, try `venv\Scripts\activate.bat` (Command Prompt) or `venv\Scripts\Activate.ps1` (PowerShell)
+- For PowerShell, you may need to run: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` first
 
 ## Frontend Setup (React)
 ```bash
