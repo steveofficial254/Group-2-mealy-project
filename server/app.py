@@ -71,14 +71,64 @@ def create_app():
     # -------------------- Routes --------------------
     @app.get("/")
     def index():
+        """Display all available API endpoints"""
+        routes = []
+        for rule in app.url_map.iter_rules():
+            if rule.endpoint != 'static':
+                routes.append({
+                    "endpoint": rule.rule,
+                    "methods": sorted(list(rule.methods - {'HEAD', 'OPTIONS'})),
+                    "function": rule.endpoint
+                })
+
+        # Sort by endpoint path
+        routes.sort(key=lambda x: x['endpoint'])
+
         return jsonify({
             "message": "Mealy API Server",
             "version": "1.0",
-            "endpoints": {
-                "health": "/health",
-                "auth": "/auth/login, /auth/register, /auth/google, /auth/apple",
-                "menus": "/daily-menus",
-                "orders": "/orders"
+            "total_endpoints": len(routes),
+            "endpoints": routes,
+            "grouped_endpoints": {
+                "health": [
+                    {"path": "/health", "methods": ["GET"], "description": "Health check"}
+                ],
+                "authentication": [
+                    {"path": "/auth/register", "methods": ["POST"], "description": "Register new user"},
+                    {"path": "/auth/login", "methods": ["POST"], "description": "Login with email/password"},
+                    {"path": "/auth/me", "methods": ["GET"], "description": "Get current user info (requires JWT)"},
+                    {"path": "/auth/google", "methods": ["POST"], "description": "Google OAuth authentication"},
+                    {"path": "/auth/apple", "methods": ["POST"], "description": "Apple Sign In authentication"}
+                ],
+                "caterers": [
+                    {"path": "/caterers", "methods": ["POST"], "description": "Create caterer (admin only)"}
+                ],
+                "daily_menus": [
+                    {"path": "/daily-menus", "methods": ["POST"], "description": "Create daily menu (admin only)"},
+                    {"path": "/daily-menus", "methods": ["GET"], "description": "List daily menus with pagination"},
+                    {"path": "/daily-menus/<int:menu_id>", "methods": ["GET"], "description": "Get menu details with dishes"}
+                ],
+                "dishes": [
+                    {"path": "/dishes", "methods": ["POST"], "description": "Add dish to menu (admin only)"},
+                    {"path": "/dishes", "methods": ["GET"], "description": "List dishes for a menu"},
+                    {"path": "/dishes/<int:dish_id>", "methods": ["PATCH"], "description": "Update dish (admin only)"},
+                    {"path": "/dishes/<int:dish_id>", "methods": ["DELETE"], "description": "Delete dish (admin only)"}
+                ],
+                "orders": [
+                    {"path": "/orders", "methods": ["POST"], "description": "Place new order (customer only)"},
+                    {"path": "/orders/my", "methods": ["GET"], "description": "Get my orders (customer only)"},
+                    {"path": "/orders/<int:order_id>", "methods": ["PATCH"], "description": "Edit order before cutoff (customer only)"},
+                    {"path": "/orders/<int:order_id>/mark-paid", "methods": ["POST"], "description": "Mark order as paid (admin only)"},
+                    {"path": "/orders/<int:order_id>/cancel", "methods": ["POST"], "description": "Cancel order (customer only)"}
+                ],
+                "admin": [
+                    {"path": "/admin/orders", "methods": ["GET"], "description": "View orders for a date (admin only)"},
+                    {"path": "/admin/revenue", "methods": ["GET"], "description": "View revenue for a date (admin only)"}
+                ],
+                "debug": [
+                    {"path": "/debug/users", "methods": ["GET"], "description": "List all users (dev only)"},
+                    {"path": "/debug/caterers", "methods": ["GET"], "description": "List all caterers (dev only)"}
+                ]
             }
         })
 
