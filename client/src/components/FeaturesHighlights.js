@@ -76,9 +76,9 @@ function FeaturesHighlights() {
 
   // Features
   const features = [
-    { icon: "📱", title: "Place an Order!", description: "Place order through our website or mobile app" },
-    { icon: "🚚", title: "Track Progress", description: "You can track your order status with delivery time" },
-    { icon: "✅", title: "Get your Order!", description: "Receive your order at a lightning fast speed!" },
+    { title: "Place an Order!", description: "Place order through our website or mobile app" },
+    { title: "Track Progress", description: "You can track your order status with delivery time" },
+    { title: "Get your Order!", description: "Receive your order at a lightning fast speed!" },
   ];
 
   return (
@@ -87,10 +87,7 @@ function FeaturesHighlights() {
       <section className="deals-section">
         <div className="container">
           <div className="deals-header">
-            <h2 className="deals-title">Today's Featured Meals</h2>
-            <p style={{ fontSize: '1rem', color: '#666', marginTop: '0.5rem' }}>
-              Pre-order your favorite meals from our daily menu
-            </p>
+            <h2 className="deals-title">Up to -40% MEALY exclusive deals</h2>
           </div>
 
           <div className="deals-grid">
@@ -106,10 +103,7 @@ function FeaturesHighlights() {
       {/* ---------------- CATEGORIES SECTION ---------------- */}
       <section className="categories-section">
         <div className="container">
-          <h2 className="section-title">Popular Meal Categories</h2>
-          <p style={{ fontSize: '1rem', color: '#666', textAlign: 'center', marginBottom: '2rem' }}>
-            Browse our selection of delicious meal options
-          </p>
+          <h2 className="section-title">Mealy Popular Categories</h2>
           <div className="categories-grid">
             {categories.map((category) => (
               <div key={category.id} className="category-card">
@@ -129,10 +123,7 @@ function FeaturesHighlights() {
       {/* ---------------- RESTAURANTS SECTION ---------------- */}
       <section className="restaurants-section">
         <div className="container">
-          <h2 className="section-title">Our Caterers</h2>
-          <p style={{ fontSize: '1rem', color: '#666', textAlign: 'center', marginBottom: '2rem' }}>
-            Quality meals from trusted local caterers
-          </p>
+          <h2 className="section-title">Popular Restaurants</h2>
           <div className="restaurants-grid">
             {restaurants.map((restaurant) => (
               <div
@@ -155,12 +146,12 @@ function FeaturesHighlights() {
             <img src={image9} alt="Easy Meal Ordering" />
           </div>
           <div className="personalised-text">
-            <h2>Pre-order made</h2>
+            <h2>MEALY is</h2>
             <h2>
-              <span className="highlight">Simple &amp; Convenient</span>
+              <span className="highlight">Personalised &amp; Instant</span>
             </h2>
             <p style={{ fontSize: '1rem', color: '#666', marginTop: '1rem' }}>
-              Order your meals in advance. Set it and forget it!
+              Download the Order app for faster ordering
             </p>
           </div>
         </div>
@@ -186,7 +177,6 @@ function FeaturesHighlights() {
               <div className="features-grid">
                 {features.map((feature, index) => (
                   <div key={index} className="feature-card">
-                    <div className="feature-icon">{feature.icon}</div>
                     <h3 className="feature-title">{feature.title}</h3>
                     <p className="feature-description">{feature.description}</p>
                   </div>
@@ -195,9 +185,8 @@ function FeaturesHighlights() {
 
               <div className="features-description">
                 <p>
-                  MEALY connects you with local caterers offering daily meal options. View the menu for the day,
-                  select your meal, and complete your order before the cutoff time. Your meal will be ready for pickup
-                  or delivery at the scheduled time.
+                  Order food online from a wide selection of restaurants. Browse our menu and place your order for
+                  delivery or collection.
                 </p>
               </div>
             </div>

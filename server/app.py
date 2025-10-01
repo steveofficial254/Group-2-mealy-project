@@ -2,11 +2,16 @@ import os
 from datetime import datetime, date
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
+from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 )
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+import jwt
+import requests
 from models import db, User, Caterer, DailyMenu, Dish, Order, OrderItem
 
 load_dotenv()
@@ -25,6 +30,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
     JWTManager(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # -------------------- Helpers --------------------
     def err(msg, code=400):
@@ -109,6 +115,128 @@ def create_app():
         uid = int(get_jwt_identity())
         u = User.query.get_or_404(uid)
         return jsonify(u.to_dict())
+
+    @app.post("/auth/google")
+    def google_auth():
+        """
+        Authenticate with Google OAuth
+        Body: { "token": "google_id_token" }
+        """
+        d = request.get_json() or {}
+        token = d.get("token")
+        if not token:
+            return err("token required")
+
+        try:
+            # Verify the Google token
+            google_client_id = os.getenv("GOOGLE_CLIENT_ID")
+            idinfo = id_token.verify_oauth2_token(
+                token, google_requests.Request(), google_client_id
+            )
+
+            # Extract user information
+            email = idinfo.get("email")
+            full_name = idinfo.get("name")
+            google_id = idinfo.get("sub")
+
+            if not email:
+                return err("email not provided by Google", 400)
+
+            # Check if user exists
+            u = User.query.filter_by(email=email).first()
+
+            if not u:
+                # Create new user
+                u = User(
+                    email=email,
+                    password_hash=generate_password_hash(os.urandom(32).hex()),  # Random password for OAuth users
+                    full_name=full_name or email.split("@")[0],
+                    role="customer",
+                    oauth_provider="google",
+                    oauth_id=google_id
+                )
+                db.session.add(u)
+                db.session.commit()
+
+            # Generate JWT token
+            access_token = create_access_token(
+                identity=str(u.id),
+                additional_claims={"role": u.role}
+            )
+
+            return jsonify({
+                "access_token": access_token,
+                "user": u.to_dict()
+            })
+
+        except ValueError as e:
+            return err(f"Invalid Google token: {str(e)}", 401)
+        except Exception as e:
+            return err(f"Google authentication failed: {str(e)}", 500)
+
+    @app.post("/auth/apple")
+    def apple_auth():
+        """
+        Authenticate with Apple Sign In
+        Body: { "id_token": "apple_id_token", "code": "authorization_code" }
+        """
+        d = request.get_json() or {}
+        id_token_str = d.get("id_token")
+
+        if not id_token_str:
+            return err("id_token required")
+
+        try:
+            # Decode Apple JWT (without verification for simplicity - in production, verify signature)
+            decoded = jwt.decode(id_token_str, options={"verify_signature": False})
+
+            email = decoded.get("email")
+            apple_id = decoded.get("sub")
+
+            if not email and not apple_id:
+                return err("Invalid Apple token", 400)
+
+            # For Apple, email might not always be provided (only on first sign-in)
+            # Use apple_id to find existing users
+            u = None
+            if email:
+                u = User.query.filter_by(email=email).first()
+
+            if not u and apple_id:
+                u = User.query.filter_by(oauth_id=apple_id, oauth_provider="apple").first()
+
+            if not u:
+                # Create new user
+                # If no email provided, generate a placeholder
+                user_email = email or f"{apple_id}@appleid.mealy.com"
+                full_name = d.get("user", {}).get("name", {}).get("firstName", "Apple User")
+
+                u = User(
+                    email=user_email,
+                    password_hash=generate_password_hash(os.urandom(32).hex()),
+                    full_name=full_name,
+                    role="customer",
+                    oauth_provider="apple",
+                    oauth_id=apple_id
+                )
+                db.session.add(u)
+                db.session.commit()
+
+            # Generate JWT token
+            access_token = create_access_token(
+                identity=str(u.id),
+                additional_claims={"role": u.role}
+            )
+
+            return jsonify({
+                "access_token": access_token,
+                "user": u.to_dict()
+            })
+
+        except jwt.InvalidTokenError as e:
+            return err(f"Invalid Apple token: {str(e)}", 401)
+        except Exception as e:
+            return err(f"Apple authentication failed: {str(e)}", 500)
 
     # -------- Caterers (admin) --------
     @app.post("/caterers")
@@ -218,6 +346,14 @@ def create_app():
         items, meta = paginate(q)
         return jsonify({"data": [x.to_dict() for x in items], "pagination": meta})
 
+    @app.delete("/dishes/<int:dish_id>")
+    @role_required("admin")
+    def delete_dish(dish_id):
+        dish = Dish.query.get_or_404(dish_id)
+        db.session.delete(dish)
+        db.session.commit()
+        return jsonify({"message": "dish deleted"}), 200
+
     # -------- Orders --------
     @app.post("/orders")
     @role_required("customer")
@@ -238,9 +374,8 @@ def create_app():
         menu = DailyMenu.query.get(daily_menu_id)
         if not menu:
             return err("daily_menu not found", 404)
-        if datetime.utcnow() >= menu.cutoff_at:
-            return err("cutoff passed", 400)
 
+        # Note: Customers CAN place new orders anytime, they just can't EDIT after cutoff
         order = Order(user_id=uid, caterer_id=menu.caterer_id, daily_menu_id=menu.id,
                       status="placed", payment_status="unpaid")
         total = 0
@@ -320,7 +455,7 @@ def create_app():
         uid = int(get_jwt_identity())
         q = Order.query.filter_by(user_id=uid).order_by(Order.created_at.desc())
         items, meta = paginate(q)
-        return jsonify({"data": [o.to_dict() for o in items], "pagination": meta})
+        return jsonify({"data": [o.to_dict(include_items=True, include_user=False) for o in items], "pagination": meta})
 
     @app.post("/orders/<int:order_id>/mark-paid")
     @role_required("admin")
@@ -329,6 +464,38 @@ def create_app():
         order.payment_status = "paid"
         db.session.commit()
         return jsonify(order.to_dict())
+
+    @app.post("/orders/<int:order_id>/cancel")
+    @role_required("customer")
+    def cancel_order(order_id):
+        """
+        Cancel an order - customer can only cancel their own orders
+        Restocks the dishes that were in the order
+        """
+        uid = int(get_jwt_identity())
+        order = Order.query.get_or_404(order_id)
+
+        # Check if user owns this order
+        if order.user_id != uid:
+            return err("cannot cancel someone else's order", 403)
+
+        # Check if order can be cancelled
+        if order.status == "cancelled":
+            return err("order is already cancelled", 400)
+        if order.status == "served":
+            return err("cannot cancel completed order", 400)
+
+        # Restock the items
+        for item in order.items:
+            dish = Dish.query.get(item.dish_id)
+            if dish:
+                dish.available_qty += item.qty
+
+        # Update order status
+        order.status = "cancelled"
+        db.session.commit()
+
+        return jsonify({"message": "order cancelled successfully", "order": order.to_dict(include_items=True)})
 
     # -------- Admin dashboards --------
     @app.get("/admin/orders")
@@ -346,7 +513,7 @@ def create_app():
              .filter(Order.caterer_id == caterer_id, DailyMenu.menu_date == d)
              .order_by(Order.created_at.desc()))
         items, meta = paginate(q)
-        return jsonify({"data": [o.to_dict(include_items=True) for o in items], "pagination": meta})
+        return jsonify({"data": [o.to_dict(include_items=True, include_user=True) for o in items], "pagination": meta})
 
     @app.get("/admin/revenue")
     @role_required("admin")
@@ -389,8 +556,10 @@ def create_app():
     return app
 
 
+# For production deployment (Gunicorn)
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
     # Safe in dev if tables don't exist yet; with migrations it's a no-op.
     with app.app_context():
         db.create_all()

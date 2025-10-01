@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillApple } from 'react-icons/ai';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { authAPI } from '../services/api';
+import { useMealyContext } from '../context/ContextProvider';
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useMealyContext();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Load Google Sign-In API
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
+          callback: handleGoogleResponse
+        });
+      }
+    };
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -40,10 +66,74 @@ const Signup = () => {
     }
   };
 
-  const socialLogin = (type) => {
-    localStorage.setItem('loginMethod', type);
-    localStorage.setItem('isAuthenticated', 'true');
-    navigate('/home');
+  const handleGoogleResponse = async (response) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await authAPI.googleAuth(response.credential);
+
+      // Store token and user data
+      localStorage.setItem('token', result.access_token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
+      setCurrentUser(result.user);
+
+      // Navigate based on role
+      if (result.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt();
+    } else {
+      setError('Google Sign-In not loaded. Please refresh the page.');
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      if (!window.AppleID) {
+        throw new Error('Apple Sign In not loaded');
+      }
+
+      const response = await window.AppleID.auth.signIn();
+
+      const result = await authAPI.appleAuth(
+        response.authorization.id_token,
+        response.authorization.code,
+        response.user
+      );
+
+      // Store token and user data
+      localStorage.setItem('token', result.access_token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
+      setCurrentUser(result.user);
+
+      // Navigate based on role
+      if (result.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      if (err.error !== 'popup_closed_by_user') {
+        setError(err.message || 'Apple sign-in failed');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,14 +164,28 @@ const Signup = () => {
               className="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all" 
             />
             
-            <input 
-              name="password" 
-              type="password" 
-              placeholder="Password (min 6 characters)" 
-              value={form.password} 
-              onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all" 
-            />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password (min 6 characters)"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full p-3 pr-12 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-opacity-80 transition-all focus:outline-none"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={24} />
+                ) : (
+                  <AiOutlineEye size={24} />
+                )}
+              </button>
+            </div>
 
             <label className="flex items-start text-white text-sm cursor-pointer">
               <input 
@@ -117,18 +221,20 @@ const Signup = () => {
               </div>
             </div>
 
-            <button 
-              type="button" 
-              onClick={() => socialLogin('Google')}
-              className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all"
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all disabled:opacity-50"
             >
               <FcGoogle className="mr-2" size={24} /> Sign up with Google
             </button>
 
-            <button 
-              type="button" 
-              onClick={() => socialLogin('Apple')}
-              className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all"
+            <button
+              type="button"
+              onClick={handleAppleSignIn}
+              disabled={loading}
+              className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all disabled:opacity-50"
             >
               <AiFillApple className="mr-2" size={24} /> Sign up with Apple
             </button>

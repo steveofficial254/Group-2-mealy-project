@@ -80,9 +80,49 @@ const Orders = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [realOrders, setRealOrders] = useState([]);
+  const [loadingReal, setLoadingReal] = useState(true);
 
   const today = new Date().toISOString().split('T')[0];
   const todayRevenue = getDailyRevenue(today);
+
+  // Fetch real orders from the API
+  React.useEffect(() => {
+    const fetchRealOrders = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        // Get user to find caterer_id
+        const userResponse = await fetch('http://localhost:5000/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const userData = await userResponse.json();
+
+        // Get caterers to find the admin's caterer
+        const catererResponse = await fetch('http://localhost:5000/debug/caterers', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const caterers = await catererResponse.json();
+        const adminCaterer = caterers.find(c => c.owner_user_id === userData.id);
+
+        if (adminCaterer) {
+          // Fetch orders for this caterer
+          const ordersResponse = await fetch(`http://localhost:5000/admin/orders?caterer_id=${adminCaterer.id}&date=${today}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const ordersData = await ordersResponse.json();
+          setRealOrders(ordersData.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch real orders:', err);
+      } finally {
+        setLoadingReal(false);
+      }
+    };
+
+    fetchRealOrders();
+  }, [today]);
 
   const handleStatusUpdate = (orderId, newStatus) => {
     updateOrderStatus(orderId, newStatus);
@@ -91,10 +131,25 @@ const Orders = () => {
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div></div>;
+  if (loading || loadingReal) return <div className="flex items-center justify-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div></div>;
   if (error) return <div className="p-6 text-center"><div className="text-red-600">Error: {error}</div></div>;
 
-  const filteredOrders = orders.filter(order => {
+  // Combine mock orders with real orders for display
+  const allOrders = [
+    ...orders,
+    ...realOrders.map(order => ({
+      id: `real-${order.id}`,
+      customer: order.user?.full_name || 'Unknown Customer',
+      items: order.items?.map(item => `${item.qty}x ${item.dish?.name}`).join(', ') || 'No items',
+      total: order.total_cents / 100,
+      status: order.status === 'placed' ? 'preparing' : order.status === 'served' ? 'delivered' : order.status,
+      date: new Date(order.created_at).toISOString().split('T')[0],
+      time: new Date(order.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      isReal: true
+    }))
+  ];
+
+  const filteredOrders = allOrders.filter(order => {
     const matchesSearch = order.customer.toLowerCase().includes(searchTerm.toLowerCase()) || order.items.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === 'all' || order.status === filterStatus;
     return matchesSearch && matchesFilter;

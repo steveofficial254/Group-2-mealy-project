@@ -41,11 +41,9 @@ const Header = () => {
       <div className="top-banner">
         <div className="top-banner-container">
           <div className="promo-section">
-            <span>⭐</span>
             <span>Get 5% Off your first order, Promo: ORDER5</span>
           </div>
           <div className="location-section">
-            <span></span>
             <span>Kimathi Street Nairobi</span>
           </div>
         </div>
@@ -57,17 +55,24 @@ const Header = () => {
           {/* Logo - Click to go home */}
           <div className="logo-section" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
             <div className="logo-container">
+              <img src="/signup-illustration.png" alt="MEALY Logo" className="logo-image" />
               <div className="logo-text">MEALY</div>
-              <div className="logo-badge">ENJOY YOUR MEAL!</div>
             </div>
           </div>
 
           {/* Navigation */}
-          <Link 
-            to="/menu" 
+          <Link
+            to="/home"
+            className={`nav-button home ${activeTab === "Home" ? "active" : ""}`}
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/menu"
             className={`nav-button menu ${activeTab === "Menu" ? "active" : ""}`}
           >
-            Menu
+            Browse Menu
           </Link>
 
           <Link
@@ -86,11 +91,9 @@ const Header = () => {
             </Link>
           )}
 
-          <div className="spacer"></div>
-
           {userName && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ color: '#333', fontWeight: '500' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: 'auto' }}>
+              <span style={{ color: '#fff', fontWeight: '500' }}>
                 {userName}
               </span>
               <button

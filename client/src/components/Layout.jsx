@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, UtensilsCrossed, ShoppingBag, Search, Bell, ShoppingCart, User, X } from 'lucide-react';
+import { LayoutDashboard, UtensilsCrossed, ShoppingBag, Search, Bell, ShoppingCart, User, X, LogOut } from 'lucide-react';
 import { useMealyContext } from '../context/ContextProvider';
 
 const Dropdown = ({ items, title, onClose, onAction, onSelect }) => (
@@ -112,6 +112,19 @@ const Layout = ({ children }) => {
                 <span className="text-sm font-medium">Hello, David</span>
                 <User className="h-8 w-8 text-gray-600" />
               </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  navigate('/signin');
+                }}
+                className="flex items-center space-x-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
         </header>

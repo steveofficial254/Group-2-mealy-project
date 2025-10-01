@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillApple } from 'react-icons/ai';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { authAPI } from '../services/api';
+import { useMealyContext } from '../context/ContextProvider';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useMealyContext();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Load Google Sign-In API
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
+          callback: handleGoogleResponse
+        });
+      }
+    };
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -29,6 +57,7 @@ const SignIn = () => {
       localStorage.setItem('token', response.access_token);
       localStorage.setItem('userData', JSON.stringify(response.user));
       localStorage.setItem('isAuthenticated', 'true');
+      setCurrentUser(response.user);
 
       if (response.user.role === 'admin') {
         navigate('/admin');
@@ -42,23 +71,72 @@ const SignIn = () => {
     }
   };
 
-  const socialLogin = (type) => {
+  const handleGoogleResponse = async (response) => {
     setLoading(true);
-    
-    setTimeout(() => {
-      const userData = {
-        name: type === 'Google' ? 'Google User' : 'Apple User',
-        email: `user@${type.toLowerCase()}.com`,
-        loginMethod: type,
-        loginDate: new Date().toISOString()
-      };
-      
-      localStorage.setItem('userData', JSON.stringify(userData));
+    setError('');
+
+    try {
+      const result = await authAPI.googleAuth(response.credential);
+
+      localStorage.setItem('token', result.access_token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
       localStorage.setItem('isAuthenticated', 'true');
-      
+      setCurrentUser(result.user);
+
+      if (result.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed');
+    } finally {
       setLoading(false);
-      navigate('/home');
-    }, 1000);
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt();
+    } else {
+      setError('Google Sign-In not loaded. Please refresh the page.');
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      if (!window.AppleID) {
+        throw new Error('Apple Sign In not loaded');
+      }
+
+      const response = await window.AppleID.auth.signIn();
+
+      const result = await authAPI.appleAuth(
+        response.authorization.id_token,
+        response.authorization.code,
+        response.user
+      );
+
+      localStorage.setItem('token', result.access_token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
+      localStorage.setItem('isAuthenticated', 'true');
+      setCurrentUser(result.user);
+
+      if (result.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      if (err.error !== 'popup_closed_by_user') {
+        setError(err.message || 'Apple sign-in failed');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,15 +160,30 @@ const SignIn = () => {
               className="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all disabled:opacity-50" 
             />
             
-            <input 
-              name="password" 
-              type="password" 
-              placeholder="Password" 
-              value={form.password} 
-              onChange={handleChange}
-              disabled={loading}
-              className="w-full p-3 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all disabled:opacity-50" 
-            />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full p-3 pr-12 rounded-lg bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all disabled:opacity-50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-opacity-80 transition-all focus:outline-none disabled:opacity-50"
+                disabled={loading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={24} />
+                ) : (
+                  <AiOutlineEye size={24} />
+                )}
+              </button>
+            </div>
 
             <div className="flex items-center justify-between text-white text-sm">
               <label className="flex items-center cursor-pointer">
@@ -126,18 +219,18 @@ const SignIn = () => {
               </div>
             </div>
 
-            <button 
-              type="button" 
-              onClick={() => socialLogin('Google')}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
               disabled={loading}
               className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all disabled:opacity-50"
             >
               <FcGoogle className="mr-2" size={24} /> Sign in with Google
             </button>
 
-            <button 
-              type="button" 
-              onClick={() => socialLogin('Apple')}
+            <button
+              type="button"
+              onClick={handleAppleSignIn}
               disabled={loading}
               className="w-full flex items-center justify-center py-3 border border-white border-opacity-30 rounded-lg text-white bg-white bg-opacity-10 hover:bg-opacity-20 transition-all disabled:opacity-50"
             >

@@ -2,14 +2,15 @@
 
 .header {
   width: 100%;
-  background-color: rgb(59, 63, 8);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 /* Top Banner Styles */
 .top-banner {
-  background: linear-gradient(90deg, #fbbf24 0%, #f97316 100%);
+  background: #fef3c7;
   padding: 8px 16px;
+  font-size: 13px;
 }
 
 .top-banner-container {
@@ -18,27 +19,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
 }
 
 .promo-section {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
-  font-weight: 500;
+  color: #92400e;
+  font-weight: 400;
 }
 
 .location-section {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
+  color: #92400e;
+  font-weight: 400;
 }
 
 /* Main Header Styles */
 .main-header {
   padding: 16px;
+  background-color: #fff;
 }
 
 .header-container {
@@ -46,101 +48,68 @@
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 24px;
 }
 
 /* Logo Styles */
 .logo-section {
   display: flex;
   align-items: center;
+  margin-right: 20px;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+}
+
+.logo-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
 }
 
 .logo-text {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: #dc2626;
 }
 
-.logo-badge {
-  background-color: black;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: bold;
-  transform: rotate(-12deg);
-}
-
 /* Navigation Styles */
-.navigation {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .nav-button {
-  padding: 8px 24px;
-  border-radius: 9999px;
+  padding: 8px 20px;
+  border-radius: 20px;
   font-weight: 500;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: white;
+  color: #fff;
+  background-color: #fb923c;
+  text-decoration: none;
+  font-size: 14px;
 }
 
-.nav-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+.nav-button:hover {
+  background-color: #f97316;
+  transform: translateY(-1px);
 }
 
-/* Home Button */
+.nav-button.active {
+  background-color: #f97316;
+}
+
 .nav-button.home {
-  background-color: #f97316;
+  background-color: #fb923c;
 }
 
-.nav-button.home:hover {
-  background-color: #ea580c;
-}
-
-.nav-button.home.active {
-  background-color: #f97316;
-}
-
-/* Menu Button */
 .nav-button.menu {
   background-color: #fb923c;
 }
 
-.nav-button.menu:hover {
-  background-color: #f97316;
-}
-
-.nav-button.menu.active {
-  background-color: #fb923c;
-}
-
-/* Admin Button */
 .nav-button.admin {
   background-color: #fed7aa;
-}
-
-.nav-button.admin:hover {
-  background-color: #fb923c;
-}
-
-.nav-button.admin.active {
-  background-color: #fed7aa;
-}
-
-/* Spacer */
-.spacer {
-  width: 80px;
+  color: #92400e;
 }
 
 /* Responsive Design */

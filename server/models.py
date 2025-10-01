@@ -14,6 +14,8 @@ class User(db.Model):
     password_hash = db.Column(db.Text, nullable=False)
     full_name = db.Column(db.Text, nullable=False)
     role = db.Column(db.Text, nullable=False)  # 'customer' | 'admin'
+    oauth_provider = db.Column(db.Text, nullable=True)  # 'google' | 'apple' | None
+    oauth_id = db.Column(db.Text, nullable=True, index=True)  # OAuth provider's user ID
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
     # One admin user can own one caterer (simple 1:1)
@@ -25,6 +27,7 @@ class User(db.Model):
             "email": self.email,
             "full_name": self.full_name,
             "role": self.role,
+            "oauth_provider": self.oauth_provider,
             "created_at": self.created_at.isoformat() + "Z",
         }
 
@@ -123,7 +126,7 @@ class Order(db.Model):
     daily_menu = db.relationship("DailyMenu", back_populates="orders")
     items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
 
-    def to_dict(self, include_items=False):
+    def to_dict(self, include_items=False, include_user=True):
         base = {
             "id": self.id,
             "user_id": self.user_id,
@@ -134,8 +137,14 @@ class Order(db.Model):
             "payment_status": self.payment_status,
             "created_at": self.created_at.isoformat() + "Z",
         }
+        if include_user and self.user:
+            base["user"] = {
+                "id": self.user.id,
+                "full_name": self.user.full_name,
+                "email": self.user.email
+            }
         if include_items:
-            base["items"] = [i.to_dict() for i in self.items]
+            base["items"] = [i.to_dict(include_dish=True) for i in self.items]
         return base
 
 
@@ -151,8 +160,8 @@ class OrderItem(db.Model):
     order = db.relationship("Order", back_populates="items")
     dish = db.relationship("Dish", back_populates="order_items")
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_dish=False):
+        base = {
             "id": self.id,
             "order_id": self.order_id,
             "dish_id": self.dish_id,
@@ -160,3 +169,11 @@ class OrderItem(db.Model):
             "unit_price_cents": self.unit_price_cents,
             "line_total_cents": self.line_total_cents,
         }
+        if include_dish and self.dish:
+            base["dish"] = {
+                "id": self.dish.id,
+                "name": self.dish.name,
+                "price_cents": self.dish.price_cents,
+                "category": self.dish.category
+            }
+        return base

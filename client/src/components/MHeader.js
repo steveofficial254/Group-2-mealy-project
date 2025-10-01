@@ -30,29 +30,27 @@ function MHeader() {
     <header className="m-header">
       <div className="header-top">
         <div className="delivery-info">
-          <span className="delivery-icon"></span>
-          <span>Get 25.00 OFF your first order, <a href="#">Promo: ORDER25</a></span>
+          <span>Get 5% OFF your first order, <a href="#">Promo: ORDER5</a></span>
         </div>
         <div className="location-info">
-          <span className="location-icon"></span>
           <span>{location}</span>
         </div>
       </div>
-      
+
       <div className="header-main">
         <Link to="/" className="logo">
-          <span className="logo-icon"></span>
+          <img src="/signup-illustration.png" alt="MEALY Logo" className="logo-image" />
           <span className="logo-text">MEALY</span>
         </Link>
-        
+
         <nav className="main-nav">
           <Link to="/home" className="nav-link">Home</Link>
-          <Link to="/menu" className="nav-link active">Menu</Link>
+          <Link to="/menu" className="nav-link active">Browse Menu</Link>
           <Link to="/my-orders" className="nav-link">My Orders</Link>
           {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
           {userName && (
             <>
-              <span style={{ color: '#333', marginLeft: '20px' }}>{userName}</span>
+              <span style={{ color: '#fff', marginLeft: '20px' }}>{userName}</span>
               <button
                 onClick={handleLogout}
                 style={{

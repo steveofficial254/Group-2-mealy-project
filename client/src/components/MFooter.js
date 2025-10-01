@@ -15,6 +15,24 @@ function MFooter() {
   return (
     <footer className="m-footer">
       <div className="footer-content">
+        {/* Logo Section */}
+        <div className="footer-brand">
+          <div className="footer-logo">
+            <img src="/signup-illustration.png" alt="MEALY Logo" className="footer-logo-img" />
+            <span className="footer-logo-text">MEALY</span>
+          </div>
+          <div className="app-badges">
+            <button className="app-badge">App Store</button>
+            <button className="app-badge">Google Play</button>
+          </div>
+          <div className="social-icons">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="TikTok">tk</a>
+            <a href="#" aria-label="Snapchat">sc</a>
+          </div>
+        </div>
+
         {/* Newsletter Section */}
         <div className="footer-newsletter">
           <h3>Get Exclusive Deals in your Inbox</h3>
@@ -31,14 +49,6 @@ function MFooter() {
           <p className="spam-notice">
             we won't spam, read our <a href="#">email policy</a>
           </p>
-          
-          {/* Social Media Icons */}
-          <div className="social-icons">
-            <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
-            <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-            <a href="#" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-            <a href="#" aria-label="Snapchat"><i className="fab fa-snapchat"></i></a>
-          </div>
         </div>
 
         {/* Legal Pages */}

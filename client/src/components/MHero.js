@@ -1,40 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/MHero.css";
 
-function MHero() {
+function MHero({ onSearch }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch(searchTerm);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <section className="m-hero">
       <div className="hero-content">
-        <h1 className="hero-title">TODAY'S MENU</h1>
+        <h1 className="hero-title">Your Daily Food Ordering Made Simple</h1>
+        <h2 className="hero-subtitle">CONNECT WITH LOCAL CATERERS</h2>
+
+        <p className="hero-description">
+          Mealy is a food-ordering platform that connects customers with caterers.
+          Easily select meals from daily menus while caterers manage meal options,
+          set daily menus, and track sales and orders. Experience transparency,
+          efficiency, and a smooth ordering process.
+        </p>
 
         <div className="hero-badges">
           <div className="badge">
-            <span className="badge-icon">⏰</span>
-            <span>Order Cutoff: 10:00 AM</span>
+            <span>Daily Fresh Menus</span>
           </div>
           <div className="badge">
-            <span className="badge-icon">🍽️</span>
-            <span>Fresh Daily Meals</span>
+            <span>Easy Order Tracking</span>
           </div>
         </div>
-
-        <div className="hero-rating">
-          <div className="rating-stars">
-            ⭐⭐⭐⭐⭐
-          </div>
-          <span className="rating-number">4.8</span>
-          <span className="rating-reviews">(245 reviews)</span>
-        </div>
-
-        <p style={{ marginTop: '1rem', color: '#666', fontSize: '0.95rem' }}>
-          Pre-order your meal from our daily selection
-        </p>
       </div>
 
       <div className="hero-sidebar">
         <div className="search-box">
-          <input type="text" placeholder="Search menu items..." />
-          <button className="search-btn">🔍</button>
+          <input
+            type="text"
+            placeholder="Search from menu..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <button className="search-btn" onClick={handleSearch}>Search</button>
         </div>
       </div>
     </section>

@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/Footer.css"; // Import the CSS
+import "../styles/Footer.css";
 
 const Footer = () => {
   return (
@@ -11,26 +11,24 @@ const Footer = () => {
             {/* Logo and App Downloads */}
             <div className="footer-brand">
               <div className="footer-logo">
+                <img src="/signup-illustration.png" alt="MEALY Logo" className="footer-logo-img" />
                 <span className="footer-logo-text">MEALY</span>
-                <div className="footer-logo-icon"></div>
               </div>
 
               <div className="footer-downloads">
                 <a href="#" className="download-btn">
-                  <span className="app-icon">📱</span>
                   App Store
                 </a>
                 <a href="#" className="download-btn">
-                  <span className="app-icon">📱</span>
                   Google Play
                 </a>
               </div>
 
               <div className="footer-social">
                 <a href="#" className="social-link facebook">f</a>
-                <a href="#" className="social-link instagram">📷</a>
-                <a href="#" className="social-link twitter">🐦</a>
-                <a href="#" className="social-link snapchat">👻</a>
+                <a href="#" className="social-link instagram">ig</a>
+                <a href="#" className="social-link twitter">tw</a>
+                <a href="#" className="social-link snapchat">sc</a>
               </div>
             </div>
 

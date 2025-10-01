@@ -127,7 +127,26 @@ export const MealyProvider = ({ children }) => {
         console.error('Failed to parse user data');
       }
     }
+    fetchMenuData();
   }, []);
+
+  const fetchMenuData = async () => {
+    try {
+      const response = await menuAPI.getDishes(1);
+      if (response.data && response.data.length > 0) {
+        const dishes = response.data.map(dish => ({
+          id: dish.id,
+          name: dish.name,
+          price: dish.price_cents / 100,
+          category: dish.category,
+          image: dish.image_url || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center'
+        }));
+        setMenu(dishes);
+      }
+    } catch (err) {
+      console.log('Using default menu data');
+    }
+  };
 
   const fetchAdminData = async () => {
     try {
@@ -140,8 +159,11 @@ export const MealyProvider = ({ children }) => {
       if (response.data) {
         const formattedOrders = response.data.map(order => ({
           id: order.id,
-          customer: `Customer #${order.user_id}`,
-          items: order.items ? order.items.map(i => `Item ${i.dish_id} x${i.qty}`).join(', ') : 'N/A',
+          customer: order.user?.full_name || order.user_name || `Customer #${order.user_id}`,
+          items: order.items ? order.items.map(i => {
+            const dishName = i.dish?.name || i.dish_name || `Item ${i.dish_id}`;
+            return `${dishName} x${i.qty}`;
+          }).join(', ') : 'N/A',
           total: order.total_cents / 100,
           status: order.status === 'placed' ? 'preparing' : order.status === 'served' ? 'delivered' : order.status,
           date: new Date(order.created_at).toISOString().split('T')[0],
@@ -176,14 +198,8 @@ export const MealyProvider = ({ children }) => {
         ingredients: newMeal.ingredients || '',
         available_qty: newMeal.available_qty || 10
       };
-      const response = await adminAPI.addDish(dishData);
-      setMenu(prev => [...prev, {
-        id: response.id,
-        name: response.name,
-        price: response.price_cents / 100,
-        category: response.category,
-        image: response.image_url
-      }]);
+      await adminAPI.addDish(dishData);
+      await fetchMenuData();
       return true;
     } catch (err) {
       setError('Failed to add meal');
@@ -201,9 +217,7 @@ export const MealyProvider = ({ children }) => {
         available_qty: updatedMeal.available_qty || 10
       };
       await adminAPI.updateDish(updatedMeal.id, dishData);
-      setMenu(prev => prev.map(meal =>
-        meal.id === updatedMeal.id ? { ...meal, ...updatedMeal } : meal
-      ));
+      await fetchMenuData();
       return true;
     } catch (err) {
       setError('Failed to update meal');
@@ -211,9 +225,10 @@ export const MealyProvider = ({ children }) => {
     }
   };
 
-  const deleteMeal = (mealId) => {
+  const deleteMeal = async (mealId) => {
     try {
-      setMenu(prev => prev.filter(meal => meal.id !== mealId));
+      await adminAPI.deleteDish(mealId);
+      await fetchMenuData();
       return true;
     } catch (err) {
       setError('Failed to delete meal');
@@ -286,7 +301,8 @@ export const MealyProvider = ({ children }) => {
     formatCurrency,
     setError,
     setCurrentUser,
-    fetchAdminData
+    fetchAdminData,
+    fetchMenuData
   };
 
   return <MealyContext.Provider value={value}>{children}</MealyContext.Provider>;

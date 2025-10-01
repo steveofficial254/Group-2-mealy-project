@@ -7,21 +7,40 @@ const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState(null);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await orderAPI.getMyOrders();
+      setOrders(response.data || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await orderAPI.getMyOrders();
-        setOrders(response.data || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
   }, []);
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) {
+      return;
+    }
+
+    try {
+      setCancellingOrderId(orderId);
+      await orderAPI.cancelOrder(orderId);
+      await fetchOrders(); // Refresh orders list
+      alert('Order cancelled successfully!');
+    } catch (err) {
+      alert(err.message || 'Failed to cancel order');
+    } finally {
+      setCancellingOrderId(null);
+    }
+  };
 
   const getStatusColor = (status) => {
     const colors = {
@@ -83,17 +102,46 @@ const MyOrders = () => {
                   <h4 className="font-medium mb-2">Items:</h4>
                   {order.items && order.items.map((item, idx) => (
                     <div key={idx} className="flex justify-between text-sm mb-1">
-                      <span>{item.qty}x Item #{item.dish_id}</span>
+                      <span>{item.qty}x {item.dish?.name || `Item #${item.dish_id}`}</span>
                       <span>KSh {(item.line_total_cents / 100).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="border-t mt-4 pt-4 flex justify-between items-center">
-                  <span className="font-semibold">Total:</span>
-                  <span className="text-xl font-bold text-green-600">
-                    KSh {(order.total_cents / 100).toFixed(2)}
-                  </span>
+                <div className="border-t mt-4 pt-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-semibold">Total:</span>
+                    <span className="text-xl font-bold text-green-600">
+                      KSh {(order.total_cents / 100).toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Cancel button - only show for placed/edited orders */}
+                  {(order.status === 'placed' || order.status === 'edited') && (
+                    <button
+                      onClick={() => handleCancelOrder(order.id)}
+                      disabled={cancellingOrderId === order.id}
+                      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                        cancellingOrderId === order.id
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-red-600 text-white hover:bg-red-700'
+                      }`}
+                    >
+                      {cancellingOrderId === order.id ? 'Cancelling...' : 'Cancel Order'}
+                    </button>
+                  )}
+
+                  {/* Show message for cancelled/served orders */}
+                  {order.status === 'cancelled' && (
+                    <div className="text-center text-red-600 text-sm py-2">
+                      This order has been cancelled
+                    </div>
+                  )}
+                  {order.status === 'served' && (
+                    <div className="text-center text-green-600 text-sm py-2">
+                      This order has been completed
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

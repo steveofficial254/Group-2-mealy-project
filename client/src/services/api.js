@@ -30,6 +30,20 @@ export const authAPI = {
       body: JSON.stringify(credentials)
     }).then(handleResponse),
 
+  googleAuth: (token) =>
+    fetch(`${API_BASE}/auth/google`, {
+      method: 'POST',
+      headers: getHeaders(false),
+      body: JSON.stringify({ token })
+    }).then(handleResponse),
+
+  appleAuth: (idToken, code, user) =>
+    fetch(`${API_BASE}/auth/apple`, {
+      method: 'POST',
+      headers: getHeaders(false),
+      body: JSON.stringify({ id_token: idToken, code, user })
+    }).then(handleResponse),
+
   getMe: () =>
     fetch(`${API_BASE}/auth/me`, {
       headers: getHeaders()
@@ -68,6 +82,12 @@ export const orderAPI = {
       method: 'PATCH',
       headers: getHeaders(),
       body: JSON.stringify({ items })
+    }).then(handleResponse),
+
+  cancelOrder: (orderId) =>
+    fetch(`${API_BASE}/orders/${orderId}/cancel`, {
+      method: 'POST',
+      headers: getHeaders()
     }).then(handleResponse)
 };
 
@@ -84,6 +104,12 @@ export const adminAPI = {
       method: 'PATCH',
       headers: getHeaders(),
       body: JSON.stringify(dishData)
+    }).then(handleResponse),
+
+  deleteDish: (dishId) =>
+    fetch(`${API_BASE}/dishes/${dishId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
     }).then(handleResponse),
 
   getOrders: (params) => {

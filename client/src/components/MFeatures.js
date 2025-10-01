@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { useNavigate } from "react-router-dom";
 import { orderAPI } from "../services/api";
 import PaymentModal from "./PaymentModal";
+import { useMealyContext } from "../context/ContextProvider";
 import "../styles/MFeatures.css";
 
 // Import images
@@ -45,13 +46,112 @@ import image51 from "../assets/image51.jpg";
 import image52 from "../assets/image52.jpg";
 import image53 from "../assets/image53.jpg";
 
-function MFeatures() {
+const MFeatures = forwardRef((props, ref) => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState("Pizzas");
+  const { menu: kenyanMenu } = useMealyContext();
+  const [activeCategory, setActiveCategory] = useState("Daily Menu");
   const [basketItems, setBasketItems] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [pendingOrderData, setPendingOrderData] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dailyMenuId, setDailyMenuId] = useState(null);
+  const [databaseDishes, setDatabaseDishes] = useState({});
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+
+  // Map image URLs to imported images
+  const imageMap = {
+    'image21.jpg': image21, 'image22.jpg': image22, 'image23.jpg': image23,
+    'image24.jpg': image24, 'image25.jpg': image25, 'image26.jpg': image26,
+    'image27.jpg': image27, 'image28.jpg': image28, 'image29.jpg': image29,
+    'image30.jpg': image30, 'image31.jpg': image31, 'image32.jpg': image32,
+    'image33.jpg': image33, 'image34.jpg': image34, 'image35.jpg': image35,
+    'image36.jpg': image36, 'image37.jpg': image37, 'image38.jpg': image38,
+    'image39.jpg': image39, 'image40.jpg': image40, 'image41.jpg': image41,
+    'image42.jpg': image42, 'image43.jpg': image43, 'image44.jpg': image44,
+    'image45.jpg': image45, 'image46.jpg': image46, 'image47.jpg': image47,
+    'image48.jpg': image48, 'image49.jpg': image49, 'image50.jpg': image50,
+    'image51.jpg': image51, 'image52.jpg': image52, 'image53.jpg': image53
+  };
+
+  const getImageFromUrl = (imageUrl) => {
+    if (!imageUrl) return image4;
+
+    // If it's already a full URL (http/https), return it directly
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    // Otherwise, try to match it to imported images
+    const filename = imageUrl.split('/').pop();
+    return imageMap[filename] || image4;
+  };
+
+  // Fetch daily menu and dishes from database
+  React.useEffect(() => {
+    const fetchMenuData = async () => {
+      try {
+        setIsLoadingMenu(true);
+        const token = localStorage.getItem('token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        // Get today's daily menu
+        const today = new Date().toISOString().split('T')[0];
+        const menusResponse = await fetch(`http://localhost:5000/daily-menus?date=${today}`, {
+          headers
+        });
+        const menusData = await menusResponse.json();
+
+        if (menusData.data && menusData.data.length > 0) {
+          const menu = menusData.data[0];
+          setDailyMenuId(menu.id);
+
+          // Fetch dishes for this menu
+          const dishesResponse = await fetch(`http://localhost:5000/dishes?daily_menu_id=${menu.id}&per_page=100`, {
+            headers
+          });
+          const dishesData = await dishesResponse.json();
+
+          // Group dishes by category
+          const dishesByCategory = {};
+          dishesData.data?.forEach(dish => {
+            if (!dishesByCategory[dish.category]) {
+              dishesByCategory[dish.category] = [];
+            }
+            const imageUrl = getImageFromUrl(dish.image_url);
+            dishesByCategory[dish.category].push({
+              id: dish.id,
+              name: dish.name,
+              description: dish.description || dish.category,
+              image: imageUrl,
+              rating: 5,
+              prices: { Medium: dish.price_cents / 100 },
+              available_qty: dish.available_qty
+            });
+          });
+
+          setDatabaseDishes(dishesByCategory);
+          console.log('✓ Menu loaded successfully:', Object.keys(dishesByCategory).length, 'categories');
+          console.log('Sample dish image:', dishesByCategory[Object.keys(dishesByCategory)[0]]?.[0]?.image);
+        } else {
+          console.warn('No menu available for today. Using fallback menu.');
+        }
+      } catch (error) {
+        console.error('Failed to fetch menu data:', error);
+      } finally {
+        setIsLoadingMenu(false);
+      }
+    };
+
+    fetchMenuData();
+  }, []);
+
+  // Expose handleSearch method to parent component
+  useImperativeHandle(ref, () => ({
+    handleSearch: (term) => {
+      setSearchTerm(term);
+    }
+  }));
 
   // Menu data for all categories
   const menuData = {
@@ -344,11 +444,24 @@ function MFeatures() {
   };
 
   const categories = [
-    "Pizzas", "Garlic Bread", "Calzone", "Kebabas", "Salads", 
+    "Daily Menu", "Pizzas", "Garlic Bread", "Calzone", "Kebabas", "Salads",
     "Cold drinks", "Happy Mealy", "Desserts", "Coffee", "Sauces", "KUKU"
   ];
 
-  const currentMenuItems = menuData[activeCategory] || [];
+  const currentMenuItems = activeCategory === "Daily Menu"
+    ? (databaseDishes["Daily Menu"] || kenyanMenu.map(item => ({
+        ...item,
+        description: item.category,
+        rating: 5,
+        prices: { Medium: item.price }
+      })))
+    : (databaseDishes[activeCategory] || menuData[activeCategory] || []);
+
+  // Filter items based on search term
+  const filteredMenuItems = currentMenuItems.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const addToBasket = (item, size) => {
     const newItem = {
@@ -379,8 +492,20 @@ function MFeatures() {
       return;
     }
 
+    if (!dailyMenuId) {
+      alert('Menu not available. Please refresh the page and try again.');
+      return;
+    }
+
+    // Validate all items have valid dish_id
+    const invalidItems = basketItems.filter(item => !item.dish_id || item.dish_id <= 0);
+    if (invalidItems.length > 0) {
+      alert('Some items in your basket are invalid. Please remove them and add items from the menu again.');
+      return;
+    }
+
     const orderData = {
-      daily_menu_id: 1,
+      daily_menu_id: dailyMenuId,
       items: basketItems.map(item => ({
         dish_id: item.dish_id,
         qty: item.quantity
@@ -395,14 +520,29 @@ function MFeatures() {
     setIsOrdering(true);
 
     try {
-      await orderAPI.placeOrder(pendingOrderData);
-      alert(`Payment successful via ${paymentInfo.method}! Order placed.`);
+      const response = await orderAPI.placeOrder(pendingOrderData);
+      alert(`Payment successful via ${paymentInfo.method}! Order placed successfully.`);
       setBasketItems([]);
       setPendingOrderData(null);
+      setShowPaymentModal(false);
       navigate('/my-orders');
     } catch (error) {
       console.error('Order failed:', error);
-      alert(error.message || 'Failed to place order. Please try again.');
+
+      // Provide specific error messages
+      let errorMessage = 'Failed to place order. ';
+      if (error.message.includes('dish invalid')) {
+        errorMessage += 'Some items are no longer available. Please refresh and try again.';
+      } else if (error.message.includes('insufficient stock')) {
+        errorMessage += 'Some items are out of stock. Please update your basket.';
+      } else if (error.message.includes('cutoff')) {
+        errorMessage += 'The ordering time has passed. Please try tomorrow.';
+      } else {
+        errorMessage += error.message || 'Please try again.';
+      }
+
+      alert(errorMessage);
+      setShowPaymentModal(false);
     } finally {
       setIsOrdering(false);
     }
@@ -425,7 +565,6 @@ function MFeatures() {
         {/* Sidebar Menu */}
         <aside className="menu-sidebar">
           <div className="sidebar-header">
-            <span className="sidebar-icon">📋</span>
             <h2>Menu</h2>
           </div>
           <ul className="menu-categories">
@@ -448,36 +587,52 @@ function MFeatures() {
           </div>
 
           <div className="menu-grid">
-            {currentMenuItems.map((item) => (
-              <div key={item.id} className="menu-item-card">
-                <img src={item.image} alt={item.name} />
-                <div className="item-info">
-                  <h3>{item.name}</h3>
-                  <div className="item-rating">
-                    {"⭐".repeat(item.rating)}
-                  </div>
-                  <p className="item-description">{item.description}</p>
-                  <div className="item-sizes">
-                    {Object.entries(item.prices).map(([size, price]) => (
-                      <button 
-                        key={size} 
-                        className="size-btn"
-                        onClick={() => addToBasket(item, size)}
-                      >
-                        {size} - {price} KSH
-                      </button>
-                    ))}
+            {isLoadingMenu ? (
+              <div style={{ padding: '40px', textAlign: 'center', gridColumn: '1 / -1' }}>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600" style={{ margin: '0 auto' }}></div>
+                <p style={{ marginTop: '16px', color: '#666' }}>Loading menu...</p>
+              </div>
+            ) : filteredMenuItems.length === 0 ? (
+              <div style={{ padding: '40px', textAlign: 'center', gridColumn: '1 / -1' }}>
+                <p style={{ fontSize: '18px', color: '#666' }}>No items available in this category</p>
+                <p style={{ fontSize: '14px', color: '#999', marginTop: '8px' }}>Try selecting another category</p>
+              </div>
+            ) : (
+              filteredMenuItems.map((item) => (
+                <div key={item.id} className="menu-item-card">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    onError={(e) => {
+                      console.warn('Image failed to load:', item.image, 'for', item.name);
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop';
+                    }}
+                  />
+                  <div className="item-info">
+                    <h3>{item.name}</h3>
+                    <p className="item-description">{item.description}</p>
+                    <div className="item-sizes">
+                      {Object.entries(item.prices).map(([size, price]) => (
+                        <button
+                          key={size}
+                          className="size-btn"
+                          onClick={() => addToBasket(item, size)}
+                        >
+                          {size} - {price} KSH
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </main>
 
         {/* Basket Sidebar */}
         <aside className="basket-sidebar">
           <div className="basket-header">
-            <span className="basket-icon">🛒</span>
             <h2>My Basket</h2>
           </div>
 
@@ -490,11 +645,11 @@ function MFeatures() {
                   <div className="basket-item-header">
                     <span className="item-quantity">{item.quantity}x</span>
                     <span className="item-name">{item.name}</span>
-                    <button 
+                    <button
                       className="remove-btn"
                       onClick={() => removeFromBasket(index)}
                     >
-                      🗑️
+                      Remove
                     </button>
                   </div>
                   {item.toppings && (
@@ -530,25 +685,21 @@ function MFeatures() {
 
           <div className="basket-actions">
             <button className="choose-free-item">
-              <span>🎁</span>
               Choose your free item...
             </button>
             <button className="apply-coupon">
-              <span>🎫</span>
               Apply Coupon Code here
             </button>
           </div>
 
           <div className="delivery-options">
             <button className="delivery-btn active">
-              <span>🚚</span>
               <div>
                 <strong>Delivery</strong>
                 <small>Starts at 17:50</small>
               </div>
             </button>
             <button className="delivery-btn">
-              <span>🏪</span>
               <div>
                 <strong>Collection</strong>
                 <small>Starts at 16:50</small>
@@ -562,7 +713,6 @@ function MFeatures() {
             disabled={isOrdering || basketItems.length === 0}
             style={{ opacity: (isOrdering || basketItems.length === 0) ? 0.5 : 1 }}
           >
-            <span>✅</span>
             {isOrdering ? 'Placing Order...' : 'Checkout!'}
           </button>
         </aside>
@@ -571,7 +721,6 @@ function MFeatures() {
       {/* Info Cards Section */}
       <section className="info-cards-section">
         <div className="info-card">
-          <div className="info-card-icon">📍</div>
           <h3>Delivery Information</h3>
           <div className="info-times">
             <div className="time-row">
@@ -602,7 +751,6 @@ function MFeatures() {
         </div>
 
         <div className="info-card">
-          <div className="info-card-icon">📞</div>
           <h3>Contact Information</h3>
           <p>If you have allergies or other dietary restrictions, please contact the restaurant. The restaurant will provide food-specific information upon request.</p>
           <div className="contact-details">
@@ -614,7 +762,6 @@ function MFeatures() {
         </div>
 
         <div className="info-card dark">
-          <div className="info-card-icon">⏰</div>
           <h3>Operational Times</h3>
           <div className="info-times light">
             <div className="time-row">
@@ -651,52 +798,67 @@ function MFeatures() {
             <button className="nav-arrow">→</button>
           </div>
         </div>
-        
+
         <div className="reviews-grid">
           <div className="review-card">
             <div className="reviewer-info">
-              <div className="reviewer-avatar">ST</div>
+              <div className="reviewer-avatar">JK</div>
               <div>
-                <strong>St Glx</strong>
-                <p>Uravu</p>
+                <strong>James Kamau</strong>
+                <p>Nairobi</p>
               </div>
               <div className="review-date">
-                <span>⭐⭐⭐⭐⭐</span>
-                <small>24th September, 2025</small>
+                <small>28th September, 2025</small>
               </div>
             </div>
             <p className="review-text">
-              The positive aspect was undoubtedly the efficiency of the service. 
-              The queue moved quickly, the staff was friendly, and the food was 
-              up to its usual standard - hot and satisfying.
+              The Nyama Choma was perfectly grilled! Reminded me of home. The ugali was
+              soft and the sukuma wiki had that authentic taste. Service was quick and
+              the portions were generous. Highly recommend!
             </p>
           </div>
 
           <div className="review-card">
             <div className="reviewer-info">
-              <div className="reviewer-avatar">NJ</div>
+              <div className="reviewer-avatar">GW</div>
               <div>
-                <strong>Nr Jin</strong>
-                <p>U'itishu</p>
+                <strong>Grace Wanjiku</strong>
+                <p>Westlands</p>
               </div>
               <div className="review-date">
-                <span>⭐⭐⭐⭐⭐</span>
-                <small>24th September, 2025</small>
+                <small>27th September, 2025</small>
               </div>
             </div>
             <p className="review-text">
-              The positive aspect was undoubtedly the efficiency of the service. 
-              The queue moved quickly, the staff was friendly, and the food was 
-              up to its usual standard - hot and satisfying.
+              Amazing pilau! The spices were just right and the rice was perfectly cooked.
+              The chicken kebab was tender and flavorful. This place serves authentic
+              Kenyan cuisine. Will definitely be ordering again!
+            </p>
+          </div>
+
+          <div className="review-card">
+            <div className="reviewer-info">
+              <div className="reviewer-avatar">DO</div>
+              <div>
+                <strong>David Otieno</strong>
+                <p>Kilimani</p>
+              </div>
+              <div className="review-date">
+                <small>26th September, 2025</small>
+              </div>
+            </div>
+            <p className="review-text">
+              Best githeri in Nairobi! Takes me back to my grandmother's cooking.
+              The beans and maize were perfectly cooked. Also tried the samosas -
+              crispy and delicious. Great value for money!
             </p>
           </div>
         </div>
 
         <div className="overall-rating">
           <div className="rating-badge">
-            <span className="rating-number">3.4</span>
-            <div className="rating-stars">⭐⭐⭐⭐☆</div>
-            <span className="rating-count">1,345 reviews</span>
+            <span className="rating-number">4.8</span>
+            <span className="rating-count">2,847 reviews</span>
           </div>
         </div>
       </section>
@@ -733,6 +895,6 @@ function MFeatures() {
       </section>
     </div>
   );
-}
+});
 
 export default MFeatures;
