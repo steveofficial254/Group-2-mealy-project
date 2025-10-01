@@ -6,8 +6,8 @@ cd server
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-flask db upgrade
-python seed_menu.py  # Seed database
+flask db upgrade #no need to run this command skip it 
+python seed_menu.py  # Seed database the database has already been seed
 python app.py  # Runs on http://localhost:5000
 ```
 
