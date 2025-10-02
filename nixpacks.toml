@@ -7,6 +7,7 @@ cmds = [
   "/opt/venv/bin/pip install --upgrade pip",
   "/opt/venv/bin/pip install -r server/requirements.txt"
 ]
+cacheDirectories = ["/opt/venv"]
 
 [start]
 cmd = "cd server && /opt/venv/bin/flask db upgrade && /opt/venv/bin/gunicorn app:app --bind 0.0.0.0:$PORT --workers 4"
@@ -14,6 +15,3 @@ cmd = "cd server && /opt/venv/bin/flask db upgrade && /opt/venv/bin/gunicorn app
 [variables]
 VIRTUAL_ENV = "/opt/venv"
 PATH = "/opt/venv/bin:$PATH"
-
-[phases.install.cacheDirectories]
-directories = ["/opt/venv"]
