@@ -312,8 +312,4 @@ If you encounter any issues:
 3. Ensure ports 3000 and 5001 are available
 4. Check that virtual environment is activated for backend
 
----
 
-## License
-
-[Your License Here]
