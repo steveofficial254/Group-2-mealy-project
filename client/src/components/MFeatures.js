@@ -5,6 +5,8 @@ import PaymentModal from "./PaymentModal";
 import { useMealyContext } from "../context/ContextProvider";
 import "../styles/MFeatures.css";
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
 // Import images
 import image4 from "../assets/image4.jpg";
 import image5 from "../assets/image5.jpg";
@@ -102,7 +104,7 @@ const MFeatures = forwardRef((props, ref) => {
 
         // Get today's daily menu
         const today = new Date().toISOString().split('T')[0];
-        const menusResponse = await fetch(`http://localhost:5001/daily-menus?date=${today}`, {
+        const menusResponse = await fetch(`${API_BASE}/daily-menus?date=${today}`, {
           headers
         });
         const menusData = await menusResponse.json();
@@ -112,7 +114,7 @@ const MFeatures = forwardRef((props, ref) => {
           setDailyMenuId(menu.id);
 
           // Fetch dishes for this menu
-          const dishesResponse = await fetch(`http://localhost:5001/dishes?daily_menu_id=${menu.id}&per_page=100`, {
+          const dishesResponse = await fetch(`${API_BASE}/dishes?daily_menu_id=${menu.id}&per_page=100`, {
             headers
           });
           const dishesData = await dishesResponse.json();

@@ -4,6 +4,8 @@ import { Button } from './ui/button';
 import { Plus, Edit, Trash2, UtensilsCrossed, Upload, X } from 'lucide-react';
 import { useMealyContext } from '../context/ContextProvider';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
 // Import all images for local mapping
 import image4 from '../assets/image4.jpg';
 import image21 from '../assets/image21.jpg';
@@ -262,7 +264,7 @@ const ManageMeals = () => {
 
       // Get today's daily menu
       const today = new Date().toISOString().split('T')[0];
-      const menusResponse = await fetch(`http://localhost:5001/daily-menus?date=${today}`, { headers });
+      const menusResponse = await fetch(`${API_BASE}/daily-menus?date=${today}`, { headers });
       const menusData = await menusResponse.json();
 
       let fetchedItems = [];
@@ -271,7 +273,7 @@ const ManageMeals = () => {
         const menuId = menusData.data[0].id;
 
         // Fetch all dishes (increase per_page to get all items)
-        const dishesResponse = await fetch(`http://localhost:5001/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
+        const dishesResponse = await fetch(`${API_BASE}/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
         const dishesData = await dishesResponse.json();
 
         if (dishesData.data) {

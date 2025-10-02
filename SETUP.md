@@ -185,24 +185,61 @@ The SQLite database will be created automatically on first run at:
 
 To reset the database, simply delete `mealy.db` and restart the server.
 
+### Creating a Daily Menu (Admin)
+
+After setup, admins need to create a daily menu before adding dishes:
+
+```bash
+cd server
+python3 -c "
+from app import create_app
+from models import db, DailyMenu
+from datetime import datetime, date
+
+app = create_app()
+with app.app_context():
+    today = date.today()
+    cutoff_time = datetime.combine(today, datetime.strptime('16:00:00', '%H:%M:%S').time())
+
+    menu = DailyMenu(
+        caterer_id=1,
+        menu_date=today,
+        cutoff_at=cutoff_time
+    )
+
+    db.session.add(menu)
+    db.session.commit()
+
+    print(f'✓ Created daily menu for {today}')
+"
+```
+
+This creates a menu with a 4:00 PM cutoff time. Repeat this daily or create a cron job to automate it.
+
 ---
 
 ## Common Issues
 
-### Issue 1: "Failed to fetch" error
-**Solution:** Ensure backend is running on port 5001 and client `.env` has `REACT_APP_API_URL=http://localhost:5001`
+### Issue 1: "No menu available for today" error in admin dashboard
+**Solution:** Create a daily menu first using the script in "Creating a Daily Menu" section above.
 
-### Issue 2: Python command not found
+### Issue 2: "Failed to fetch" or port mismatch errors
+**Solution:**
+- Ensure backend is running on port 5001 and client `.env` has `REACT_APP_API_URL=http://localhost:5001`
+- All API calls now use the `API_BASE` constant from environment variables
+- Check both `client/.env` and `server/.env` have correct port configuration
+
+### Issue 3: Python command not found
 **Solution:**
 - Windows: Use `python` or add Python to PATH
 - Linux/Mac: Use `python3` or create an alias
 
-### Issue 3: Port already in use
+### Issue 4: Port already in use
 **Solution:**
 - Windows: `netstat -ano | findstr :5001` then `taskkill /PID <PID> /F`
 - Linux/Mac: `lsof -ti:5001 | xargs kill -9`
 
-### Issue 4: Virtual environment activation issues
+### Issue 5: Virtual environment activation issues
 **Solution:**
 - Windows: May need to run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` in PowerShell
 - Linux/Mac: Ensure `venv/bin/activate` has execute permissions: `chmod +x venv/bin/activate`

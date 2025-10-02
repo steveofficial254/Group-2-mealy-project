@@ -4,6 +4,8 @@ import { Button } from './ui/button';
 import { Plus, Search, Clock, CheckCircle } from 'lucide-react';
 import { useMealyContext } from '../context/ContextProvider';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
 // Badge component
 const Badge = ({ className, children }) => (
   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`}>
@@ -94,13 +96,13 @@ const Orders = () => {
         if (!token) return;
 
         // Get user to find caterer_id
-        const userResponse = await fetch('http://localhost:5001/auth/me', {
+        const userResponse = await fetch(`${API_BASE}/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const userData = await userResponse.json();
 
         // Get caterers to find the admin's caterer
-        const catererResponse = await fetch('http://localhost:5001/debug/caterers', {
+        const catererResponse = await fetch(`${API_BASE}/debug/caterers`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const caterers = await catererResponse.json();
@@ -108,7 +110,7 @@ const Orders = () => {
 
         if (adminCaterer) {
           // Fetch orders for this caterer
-          const ordersResponse = await fetch(`http://localhost:5001/admin/orders?caterer_id=${adminCaterer.id}&date=${today}`, {
+          const ordersResponse = await fetch(`${API_BASE}/admin/orders?caterer_id=${adminCaterer.id}&date=${today}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const ordersData = await ordersResponse.json();
