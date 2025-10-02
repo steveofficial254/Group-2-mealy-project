@@ -3,10 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Plus, Edit, Trash2, UtensilsCrossed, Upload, X } from 'lucide-react';
 import { useMealyContext } from '../context/ContextProvider';
-
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
-
-// Import all images for local mapping
 import image4 from '../assets/image4.jpg';
 import image21 from '../assets/image21.jpg';
 import image22 from '../assets/image22.jpg';
@@ -41,6 +37,8 @@ import image50 from '../assets/image50.jpg';
 import image51 from '../assets/image51.jpg';
 import image52 from '../assets/image52.jpg';
 import image53 from '../assets/image53.jpg';
+
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 // Map image URLs to imported images
 const imageMap = {

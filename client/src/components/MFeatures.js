@@ -4,10 +4,6 @@ import { orderAPI } from "../services/api";
 import PaymentModal from "./PaymentModal";
 import { useMealyContext } from "../context/ContextProvider";
 import "../styles/MFeatures.css";
-
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
-
-// Import images
 import image4 from "../assets/image4.jpg";
 import image5 from "../assets/image5.jpg";
 import image6 from "../assets/image6.jpg";
@@ -47,6 +43,8 @@ import image50 from "../assets/image50.jpg";
 import image51 from "../assets/image51.jpg";
 import image52 from "../assets/image52.jpg";
 import image53 from "../assets/image53.jpg";
+
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 const MFeatures = forwardRef((props, ref) => {
   const navigate = useNavigate();
