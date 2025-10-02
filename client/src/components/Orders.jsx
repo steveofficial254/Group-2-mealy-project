@@ -94,13 +94,13 @@ const Orders = () => {
         if (!token) return;
 
         // Get user to find caterer_id
-        const userResponse = await fetch('http://localhost:5000/auth/me', {
+        const userResponse = await fetch('http://localhost:5001/auth/me', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const userData = await userResponse.json();
 
         // Get caterers to find the admin's caterer
-        const catererResponse = await fetch('http://localhost:5000/debug/caterers', {
+        const catererResponse = await fetch('http://localhost:5001/debug/caterers', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const caterers = await catererResponse.json();
@@ -108,7 +108,7 @@ const Orders = () => {
 
         if (adminCaterer) {
           // Fetch orders for this caterer
-          const ordersResponse = await fetch(`http://localhost:5000/admin/orders?caterer_id=${adminCaterer.id}&date=${today}`, {
+          const ordersResponse = await fetch(`http://localhost:5001/admin/orders?caterer_id=${adminCaterer.id}&date=${today}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const ordersData = await ordersResponse.json();

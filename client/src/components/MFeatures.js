@@ -102,7 +102,7 @@ const MFeatures = forwardRef((props, ref) => {
 
         // Get today's daily menu
         const today = new Date().toISOString().split('T')[0];
-        const menusResponse = await fetch(`http://localhost:5000/daily-menus?date=${today}`, {
+        const menusResponse = await fetch(`http://localhost:5001/daily-menus?date=${today}`, {
           headers
         });
         const menusData = await menusResponse.json();
@@ -112,7 +112,7 @@ const MFeatures = forwardRef((props, ref) => {
           setDailyMenuId(menu.id);
 
           // Fetch dishes for this menu
-          const dishesResponse = await fetch(`http://localhost:5000/dishes?daily_menu_id=${menu.id}&per_page=100`, {
+          const dishesResponse = await fetch(`http://localhost:5001/dishes?daily_menu_id=${menu.id}&per_page=100`, {
             headers
           });
           const dishesData = await dishesResponse.json();

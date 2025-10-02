@@ -262,7 +262,7 @@ const ManageMeals = () => {
 
       // Get today's daily menu
       const today = new Date().toISOString().split('T')[0];
-      const menusResponse = await fetch(`http://localhost:5000/daily-menus?date=${today}`, { headers });
+      const menusResponse = await fetch(`http://localhost:5001/daily-menus?date=${today}`, { headers });
       const menusData = await menusResponse.json();
 
       let fetchedItems = [];
@@ -271,7 +271,7 @@ const ManageMeals = () => {
         const menuId = menusData.data[0].id;
 
         // Fetch all dishes (increase per_page to get all items)
-        const dishesResponse = await fetch(`http://localhost:5000/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
+        const dishesResponse = await fetch(`http://localhost:5001/dishes?daily_menu_id=${menuId}&per_page=1000`, { headers });
         const dishesData = await dishesResponse.json();
 
         if (dishesData.data) {
