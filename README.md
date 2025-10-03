@@ -25,7 +25,7 @@ Mealy is a full-stack food ordering platform designed to connect customers with 
 ### Version Control
 - Git & GitHub (collaborative workflow)
 
-## Setup Instructions - Also check on the SETUP.md
+## Setup Instructions - Also check on the SETUP.md it has the instruction for windows and linux highly recommended
 
 ### 1. Clone the Repository
 ```bash
@@ -159,6 +159,7 @@ Special thanks to **Moringa School** and our mentors for their guidance and proj
 ## License
 
 This project is licensed under the MIT License.
+
 
 
 
