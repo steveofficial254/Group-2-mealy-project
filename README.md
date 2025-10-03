@@ -148,7 +148,7 @@ Authorization: Bearer <access_token>
 | Name | Role |
 |------|------|
 | Mohamed Ali | Backend Developer |
-| Vallary | Backend Developer |
+| Vallary Onyando| Backend Developer |
 | David Muchahi | Frontend Developer |
 | Steve Mburu | Frontend Developer |
 
@@ -159,6 +159,7 @@ Special thanks to **Moringa School** and our mentors for their guidance and proj
 ## License
 
 This project is licensed under the MIT License.
+
 
 
 
