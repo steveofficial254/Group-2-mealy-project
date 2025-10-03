@@ -6,7 +6,7 @@ Mealy is a full-stack food ordering platform designed to connect customers with 
 
 **Live Deployment:** [https://group-2-mealy-project.onrender.com](https://group-2-mealy-project.onrender.com)
 
-> **Note:** If you encounter a "Failed to fetch" error on the deployment link, please follow the local setup instructions below to run the server locally.
+> **Note:** If you encounter a "Failed to fetch" error on the deployment link, please follow the local setup instructions below to run the server locally or run the link and start the server locally on your machine.
 
 ## Tools & Technologies Used
 
@@ -159,6 +159,7 @@ Special thanks to **Moringa School** and our mentors for their guidance and proj
 ## License
 
 This project is licensed under the MIT License.
+
 
 
 
