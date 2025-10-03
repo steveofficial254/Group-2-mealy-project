@@ -1,156 +1,165 @@
-Mealy — Online Food Ordering Platform
-Description
+# Mealy — Online Food Ordering Platform
 
-Mealy is a full-stack food-ordering platform designed to connect customers with caterers.
-Admins (caterers) can manage daily menus and dishes, while customers can browse menus, place orders, and view order history.
-The system ensures smooth order tracking, user authentication, and role-based access using JWT.
+## Description
 
-Tools & Technologies Used
-Backend
+Mealy is a full-stack food ordering platform designed to connect customers with caterers. Admins (caterers) can manage daily menus and dishes, while customers can browse menus, place orders, and view order history. The system ensures smooth order tracking, user authentication, and role-based access using JWT.
 
- Python 3.13
+**Live Deployment:** [https://group-2-mealy-project.onrender.com](https://group-2-mealy-project.onrender.com)
 
-Flask (REST API framework)
+> **Note:** If you encounter a "Failed to fetch" error on the deployment link, please follow the local setup instructions below to run the server locally.
 
- SQLAlchemy & Flask-Migrate (ORM and migrations)
+## Tools & Technologies Used
 
- Flask-JWT-Extended (authentication)
+### Backend
+- Python 3.13
+- Flask (REST API framework)
+- SQLAlchemy & Flask-Migrate (ORM and migrations)
+- Flask-JWT-Extended (authentication)
+- PostgreSQL (database)
+- Pytest (testing)
+- Thunder Client / Postman (API testing)
 
- PostgreSQL (database)
+### Frontend
+- React
 
- Pytest (testing)
+### Version Control
+- Git & GitHub (collaborative workflow)
 
-Thunder Client / Postman (API testing)
+## Setup Instructions - Also check on the SETUP.md
 
-Frontend 
-
- React 
-
-Version Control
-
- Git & GitHub (collaborative workflow)
-
- Setup Instructions (After Cloning the Repo)
-Clone the Repository
+### 1. Clone the Repository
+```bash
 git clone https://github.com/steveofficial254/Group-2-mealy-project.git
 cd Group-2-mealy-project
+```
 
-2️ Set Up the Virtual Environment
+### 2. Set Up the Virtual Environment
+```bash
 pipenv install
 pipenv shell
+```
 
-3️Navigate to the Backend Folder
+### 3. Navigate to the Backend Folder
+```bash
 cd backend
+```
 
-4️ Create a .env File
+### 4. Create a .env File
+In the `backend/` directory, create a `.env` file and add:
 
-In the backend/ directory, create a .env file and add:
-
+```env
 FLASK_APP=app.py
 FLASK_ENV=development
 DATABASE_URL=postgresql://mealy:mealy@localhost/mealy
 JWT_SECRET_KEY=supersecret
 SECRET_KEY=flasksecret
+```
 
- Database Setup
-1️ Start PostgreSQL
+### 5. Database Setup
+
+#### Start PostgreSQL
+```bash
 brew services start postgresql@15
+```
 
-2️ Create Database (only once)
+#### Create Database (only once)
+```bash
 psql postgres
+```
+
+Run the following SQL commands:
+```sql
 CREATE ROLE mealy WITH LOGIN PASSWORD 'mealy';
 ALTER ROLE mealy CREATEDB;
 CREATE DATABASE mealy OWNER mealy;
 \q
+```
 
-3️ Run Database Migrations
+#### Run Database Migrations
+```bash
 flask db init
 flask db migrate -m "initial schema"
 flask db upgrade
+```
 
- Run the Application
+## How to Run the Application
+
+Start the Flask development server:
+```bash
 flask run --debug
+```
 
+The app will be live at: **http://127.0.0.1:5000**
 
-App will be live at:
- http://127.0.0.1:5000
+## API Testing via Thunder Client / Postman
 
-🧪 API Testing via Thunder Client / Postman
- Register a User
+### 1. Register a User
+**POST** `/auth/register`
 
-POST /auth/register
-
+```json
 {
   "email": "admin@mealy.io",
   "password": "admin123",
   "full_name": "Admin",
   "role": "admin"
 }
+```
 
- Login
+### 2. Login
+**POST** `/auth/login`
 
-POST /auth/login
-
+```json
 {
-  "email": "admin@mealy.io",
+  "email": "admin@test.com",
   "password": "admin123"
 }
+```
 
-3️⃣ Create Caterer (Admin Only)
+### 3. Create Caterer (Admin Only)
+**POST** `/caterers`
 
-POST /caterers
-
+```json
 {
-  "name": "Mama’s Kitchen"
+  "name": "Mama's Kitchen"
 }
+```
 
-
-Headers:
-
+**Headers:**
+```
 Authorization: Bearer <access_token>
+```
 
-4️⃣ Add Dishes
+### 4. Add Dishes
+**POST** `/dishes`
 
-POST /dishes
-
+```json
 {
   "daily_menu_id": 1,
   "name": "Beef Rice",
   "price_cents": 1500,
   "category": "Lunch",
   "available_qty": 30,
-  "image_url": "https://cdn.pixabay.com/photo/2016/02/19/11/53/food-1209007_960_720.jpg"
+  
 }
+```
 
-Screenshots (example placeholders)
-Feature	Screenshot
- Homepage / API Health	
+## Authors
 
- User Registration	
+| Name | Role |
+|------|------|
+| Mohamed Ali | Backend Developer |
+| Vallary | Backend Developer |
+| David Muchahi | Frontend Developer |
+| Steve Mburu | Frontend Developer |
 
-Caterer Management	
+## Acknowledgements
 
- Order Flow	
+Special thanks to **Moringa School** and our mentors for their guidance and project supervision.
 
-Add at least 4 screenshots in a /screenshots/ folder at the root.
+## License
 
-Authors / Acknowledgements
-Name	Role
-Mohamed Ali	Backend Developer
-vallary-backend Developer
-David Muchahi - Frontend Developer
-steve mburu - frontend Developer
-
+This project is licensed under the MIT License.
 
 
-
-
-Group 2 Members	Collaborators
-
-Special thanks to Moringa School & Mentors for guidance and project supervision.
-
- License
-
-This project is licensed under the MIT License
 
 
