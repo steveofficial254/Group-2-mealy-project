@@ -15,7 +15,7 @@ This guide will help you set up and run the Mealy application on **Windows**, **
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone <https://github.com/steveofficial254/Group-2-mealy-project>
 cd Group-2-mealy-project
 ```
 
