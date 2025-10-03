@@ -139,7 +139,7 @@ const AddMealForm = ({ onSubmit, onCancel, editingMeal = null }) => {
             onChange={(e) => setFormData({...formData, category: e.target.value})}
             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500"
           >
-            {['Daily Menu', 'Pizzas', 'Garlic Bread', 'Calzone', 'Kebabas', 'Salads', 'Cold drinks', 'Happy Mealy', 'Desserts', 'Coffee', 'Sauces', 'KUKU', 'Traditional', 'Grilled Meats', 'Rice Dishes', 'Stews', 'Street Food', 'Snacks', 'Seafood'].map(cat => (
+            {['Daily Menu', 'Pizzas', 'Garlic Bread', 'Calzone', 'Kebabas', 'Salads', 'Cold drinks', 'Happy Mealy', 'Desserts', 'Coffee', 'Sauces', 'KUKU'].map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
@@ -283,7 +283,15 @@ const ManageMeals = () => {
             image: getImageFromUrl(dish.image_url)
           }));
           console.log('✓ Fetched dishes for admin:', fetchedItems.length, 'items');
-          console.log('Sample dish:', fetchedItems[0]);
+
+          // Debug: Check image URLs
+          const dailyMenuItems = fetchedItems.filter(item => item.category === 'Daily Menu');
+          if (dailyMenuItems.length > 0) {
+            console.log('Daily Menu items in admin:');
+            dailyMenuItems.forEach(item => {
+              console.log(`  - ${item.name}: ${item.image ? 'has image' : 'NO IMAGE'}`);
+            });
+          }
         }
       }
 

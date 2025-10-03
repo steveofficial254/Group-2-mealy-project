@@ -185,9 +185,60 @@ The SQLite database will be created automatically on first run at:
 
 To reset the database, simply delete `mealy.db` and restart the server.
 
-### Creating a Daily Menu (Admin)
+### Seeding the Database with Sample Data (IMPORTANT!)
 
-After setup, admins need to create a daily menu before adding dishes:
+**After first setup, you MUST run the seed script to populate the database with:**
+- Admin user (email: admin@mealy.com, password: admin123)
+- Caterer
+- Today's daily menu
+- All menu items across all categories (Pizzas, Garlic Bread, Calzone, Kebabas, Salads, etc.)
+
+**To seed the database:**
+
+#### Windows
+```cmd
+cd server
+venv\Scripts\activate
+python seed_menu.py
+```
+
+#### Linux / macOS
+```bash
+cd server
+source venv/bin/activate
+python3 seed_menu.py
+```
+
+**Expected output:**
+```
+✓ Created admin user: admin@mealy.com
+✓ Created caterer: Mealy Kitchen (ID: 1)
+✓ Created daily menu for 2025-10-03 (ID: 1)
+
+Adding 44 dishes to menu...
+✓ Successfully added 44 dishes
+
+============================================================
+DATABASE SEEDING COMPLETE
+============================================================
+Caterer ID: 1
+Daily Menu ID: 1
+Menu Date: 2025-10-03
+Total Dishes: 44
+============================================================
+
+You can now use this menu in your application!
+```
+
+**Important Notes:**
+- Run this script every day to create today's menu with all dishes
+- If you see "already exists" messages, the script will skip creating duplicates
+- You can run this script multiple times safely - it won't create duplicates
+- All menu categories will be populated: Daily Menu, Pizzas, Garlic Bread, Calzone, Kebabas, Salads, Cold drinks, Happy Mealy, Desserts, Coffee, Sauces, and KUKU
+
+### Alternative: Manual Daily Menu Creation (Advanced)
+
+If you only need to create a daily menu without dishes:
 
 ```bash
 cd server
@@ -220,26 +271,41 @@ This creates a menu with a 4:00 PM cutoff time. Repeat this daily or create a cr
 
 ## Common Issues
 
-### Issue 1: "No menu available for today" error in admin dashboard
-**Solution:** Create a daily menu first using the script in "Creating a Daily Menu" section above.
+### Issue 1: "Menu not available, please refresh the page" error during checkout
+**Symptoms:** Customer sees error "Menu not available. Please refresh the page and try again." when trying to checkout.
 
-### Issue 2: "Failed to fetch" or port mismatch errors
+**Root Cause:** No daily menu exists for today in the database.
+
+**Solution:**
+1. Run the seed script to create today's menu:
+   ```bash
+   cd server
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python3 seed_menu.py       # On Windows: python seed_menu.py
+   ```
+2. Refresh the customer page
+3. The menu should now load successfully
+
+### Issue 2: "No menu available for today" error in admin dashboard
+**Solution:** Same as Issue 1 - run the seed script to create today's menu.
+
+### Issue 3: "Failed to fetch" or port mismatch errors
 **Solution:**
 - Ensure backend is running on port 5001 and client `.env` has `REACT_APP_API_URL=http://localhost:5001`
 - All API calls now use the `API_BASE` constant from environment variables
 - Check both `client/.env` and `server/.env` have correct port configuration
 
-### Issue 3: Python command not found
+### Issue 4: Python command not found
 **Solution:**
 - Windows: Use `python` or add Python to PATH
 - Linux/Mac: Use `python3` or create an alias
 
-### Issue 4: Port already in use
+### Issue 5: Port already in use
 **Solution:**
 - Windows: `netstat -ano | findstr :5001` then `taskkill /PID <PID> /F`
 - Linux/Mac: `lsof -ti:5001 | xargs kill -9`
 
-### Issue 5: Virtual environment activation issues
+### Issue 6: Virtual environment activation issues
 **Solution:**
 - Windows: May need to run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` in PowerShell
 - Linux/Mac: Ensure `venv/bin/activate` has execute permissions: `chmod +x venv/bin/activate`
@@ -288,21 +354,7 @@ REACT_APP_APPLE_CLIENT_ID=<your-apple-client-id>
 
 ---
 
-## Testing
-
-### Backend Tests
-```bash
-cd server
-pytest
-```
-
-### Frontend Tests
-```bash
-cd client
-npm test
-```
-
----
+#
 
 ## Support
 

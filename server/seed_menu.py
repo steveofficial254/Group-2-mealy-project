@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""
-Seed script to populate the database with a caterer, daily menu, and dishes.
-Run this script to set up initial data for the Mealy application.
-"""
+
 from datetime import datetime, date, timedelta
 from app import create_app
 from models import db, Caterer, DailyMenu, Dish, User
@@ -162,23 +159,31 @@ def seed_database():
             {"name": "Chicken Wings", "price_cents": 70000, "category": "KUKU", "available_qty": 35,
              "description": "Spicy buffalo | 8 pieces", "image_url": f"{image_base}image53.jpg"},
 
-            # Daily Menu / Traditional Kenyan
+            # Daily Menu / Traditional Kenyan (using fallback Unsplash images)
             {"name": "Nyama Choma Platter", "price_cents": 120000, "category": "Daily Menu", "available_qty": 15,
-             "description": "Grilled goat meat | Authentic Kenyan style"},
+             "description": "Grilled goat meat | Authentic Kenyan style",
+             "image_url": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&crop=center"},
             {"name": "Ugali & Sukuma Wiki", "price_cents": 35000, "category": "Daily Menu", "available_qty": 40,
-             "description": "Traditional maize meal with kale"},
+             "description": "Traditional maize meal with kale",
+             "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/48/Ugali_%26_Sukuma_Wiki.jpg"},
             {"name": "Pilau Rice", "price_cents": 65000, "category": "Daily Menu", "available_qty": 30,
-             "description": "Spiced rice | Kenyan style"},
+             "description": "Spiced rice | Kenyan style",
+             "image_url": "https://soyummyrecipes.com/wp-content/uploads/2020/12/Chicken-pilau-rice-1-2.jpg.webp"},
             {"name": "Githeri Special", "price_cents": 28000, "category": "Daily Menu", "available_qty": 35,
-             "description": "Maize and beans | Traditional"},
+             "description": "Maize and beans | Traditional",
+             "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8jo17LHxmHZeRXbkwED5MIthJXthXYlmTMQ&s"},
             {"name": "Chapati & Beef Stew", "price_cents": 48000, "category": "Daily Menu", "available_qty": 30,
-             "description": "Soft flatbread with rich stew"},
+             "description": "Soft flatbread with rich stew",
+             "image_url": "https://i.pinimg.com/1200x/11/51/72/1151724a874912495a0dc0440a5c179e.jpg"},
             {"name": "Samosas (6 pcs)", "price_cents": 30000, "category": "Daily Menu", "available_qty": 50,
-             "description": "Crispy pastries | Beef or veg"},
+             "description": "Crispy pastries | Beef or veg",
+             "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop&crop=center"},
             {"name": "Mutura Combo", "price_cents": 42000, "category": "Daily Menu", "available_qty": 25,
-             "description": "Traditional sausage | Kachumbari"},
+             "description": "Traditional sausage | Kachumbari",
+             "image_url": "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=300&fit=crop&crop=center"},
             {"name": "Fish & Ugali", "price_cents": 85000, "category": "Daily Menu", "available_qty": 20,
-             "description": "Fried tilapia with ugali"},
+             "description": "Fried tilapia with ugali",
+             "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6F-5ExO6HnUWgNnQ1_qRzsFXgDsu9j2KxOTPxXx_MgqIGxR1saR-bbCPdx-HsfmIocQc&usqp=CAU"},
         ]
 
         print(f"\nAdding {len(dishes_data)} dishes to menu...")

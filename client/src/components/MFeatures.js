@@ -111,8 +111,8 @@ const MFeatures = forwardRef((props, ref) => {
           const menu = menusData.data[0];
           setDailyMenuId(menu.id);
 
-          // Fetch dishes for this menu
-          const dishesResponse = await fetch(`${API_BASE}/dishes?daily_menu_id=${menu.id}&per_page=100`, {
+          // Fetch dishes for this menu (increase per_page to get all items)
+          const dishesResponse = await fetch(`${API_BASE}/dishes?daily_menu_id=${menu.id}&per_page=1000`, {
             headers
           });
           const dishesData = await dishesResponse.json();
@@ -137,9 +137,21 @@ const MFeatures = forwardRef((props, ref) => {
 
           setDatabaseDishes(dishesByCategory);
           console.log('✓ Menu loaded successfully:', Object.keys(dishesByCategory).length, 'categories');
-          console.log('Sample dish image:', dishesByCategory[Object.keys(dishesByCategory)[0]]?.[0]?.image);
+          console.log('Categories found:', Object.keys(dishesByCategory));
+
+          // Debug: Check Daily Menu images
+          if (dishesByCategory['Daily Menu']) {
+            console.log('Daily Menu items with images:');
+            dishesByCategory['Daily Menu'].forEach(dish => {
+              console.log(`  - ${dish.name}: ${dish.image ? 'has image' : 'NO IMAGE'}`);
+              if (dish.image) {
+                console.log(`    Image URL: ${dish.image.substring(0, 80)}...`);
+              }
+            });
+          }
         } else {
-          console.warn('No menu available for today. Using fallback menu.');
+          console.warn('⚠ No menu available for today. Please create a daily menu first.');
+          alert('No menu available for today. Please ask an admin to create today\'s menu.');
         }
       } catch (error) {
         console.error('Failed to fetch menu data:', error);
@@ -448,10 +460,16 @@ const MFeatures = forwardRef((props, ref) => {
     ]
   };
 
-  const categories = [
-    "Daily Menu", "Pizzas", "Garlic Bread", "Calzone", "Kebabas", "Salads",
-    "Cold drinks", "Happy Mealy", "Desserts", "Coffee", "Sauces", "KUKU"
-  ];
+  // Generate categories dynamically from database dishes
+  const categories = React.useMemo(() => {
+    const dbCategories = Object.keys(databaseDishes);
+    const allCategories = ["Daily Menu", "Pizzas", "Garlic Bread", "Calzone", "Kebabas", "Salads",
+      "Cold drinks", "Happy Mealy", "Desserts", "Coffee", "Sauces", "KUKU"];
+
+    // Merge database categories with default ones, removing duplicates
+    const merged = [...new Set([...allCategories, ...dbCategories])];
+    return merged;
+  }, [databaseDishes]);
 
   const currentMenuItems = activeCategory === "Daily Menu"
     ? (databaseDishes["Daily Menu"] || kenyanMenu.map(item => ({
@@ -493,19 +511,21 @@ const MFeatures = forwardRef((props, ref) => {
     }
 
     if (basketItems.length === 0) {
-      alert('Your basket is empty');
+      alert('Your basket is empty. Please add items from the menu.');
       return;
     }
 
     if (!dailyMenuId) {
-      alert('Menu not available. Please refresh the page and try again.');
+      alert('⚠ Menu not available\n\nNo daily menu is currently active. This may happen if:\n• Today\'s menu hasn\'t been created yet\n• The page needs to be refreshed\n\nPlease refresh the page and try again, or contact support if the issue persists.');
       return;
     }
 
     // Validate all items have valid dish_id
     const invalidItems = basketItems.filter(item => !item.dish_id || item.dish_id <= 0);
     if (invalidItems.length > 0) {
-      alert('Some items in your basket are invalid. Please remove them and add items from the menu again.');
+      alert('⚠ Invalid items detected\n\nSome items in your basket are no longer valid. This can happen if:\n• The items were removed from the menu\n• The page data is outdated\n\nPlease clear your basket and add fresh items from the menu.');
+      // Clear basket to avoid confusion
+      setBasketItems([]);
       return;
     }
 
